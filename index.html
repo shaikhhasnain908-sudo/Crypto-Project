@@ -206,21 +206,91 @@
         <!-- 3 Key High-Level Highlight Cards: Profit Before Tax, Estimated Tax, Profit After Tax -->
         <div class="tax-summary-cards">
           <div class="tax-summary-box">
-            <span class="tax-box-title">Profit Before Tax</span>
+            <div class="tax-box-header">
+              <span class="tax-box-title">Profit Before Tax</span>
+              <span class="tax-box-icon pbt-icon" title="Pre-tax economic gain">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                  <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+              </span>
+            </div>
             <div class="tax-box-value neutral" id="pbtHighlightDisplay">₹0.00</div>
-            <span class="tax-box-sub">Net profit before government taxes</span>
+            <span class="tax-box-sub">Gross realized gain before statutory deductions</span>
           </div>
 
           <div class="tax-summary-box tax-liability-box">
-            <span class="tax-box-title" id="taxBoxLabel">Estimated Indian Tax (30%)</span>
+            <div class="tax-box-header">
+              <span class="tax-box-title" id="taxBoxLabel">Estimated Indian Tax (30%)</span>
+              <span class="tax-box-icon tax-icon" title="Estimated tax obligation">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+              </span>
+            </div>
             <div class="tax-box-value tax-color" id="taxHighlightDisplay">₹0.00</div>
             <span class="tax-box-sub" id="taxBoxSub">Sec 115BBH flat tax liability</span>
           </div>
 
           <div class="tax-summary-box primary-box">
-            <span class="tax-box-title">Profit After Tax (Take-Home)</span>
+            <div class="tax-box-header">
+              <span class="tax-box-title">Profit After Tax (Take-Home)</span>
+              <span class="tax-box-icon pat-icon" title="Net disposable cash profit">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+              </span>
+            </div>
             <div class="tax-box-value neutral" id="patHighlightDisplay">₹0.00</div>
             <span class="tax-box-sub" id="roiSubDisplay">0.00% Net ROI</span>
+          </div>
+        </div>
+
+        <!-- Capital Allocation & Flow Visual Bar (Stripe / Fintech Style) -->
+        <div class="allocation-flow-card" id="allocationFlowCard">
+          <div class="allocation-flow-header">
+            <div class="alloc-title-wrap">
+              <span class="alloc-title">Capital Allocation &amp; Returns Flow</span>
+              <span class="alloc-desc">Proportional distribution of trade proceeds</span>
+            </div>
+            <span class="alloc-status-pill" id="allocStatusPill">Awaiting Calculation</span>
+          </div>
+          <div class="allocation-bar-track" id="allocationBarTrack">
+            <div class="alloc-bar-fill alloc-fill-capital" id="allocBarCapital" style="width: 50%;" title="Capital Invested"></div>
+            <div class="alloc-bar-fill alloc-fill-profit" id="allocBarProfit" style="width: 25%;" title="Net Take-Home Profit"></div>
+            <div class="alloc-bar-fill alloc-fill-tax" id="allocBarTax" style="width: 20%;" title="Government Tax"></div>
+            <div class="alloc-bar-fill alloc-fill-fee" id="allocBarFee" style="width: 5%;" title="Exchange Fees"></div>
+          </div>
+          <div class="allocation-legend-grid">
+            <div class="alloc-legend-item">
+              <span class="legend-color-indicator color-capital"></span>
+              <div class="legend-text">
+                <span class="legend-label">Cost Basis</span>
+                <strong class="legend-amount" id="allocLegendCapital">₹0.00 (0.0%)</strong>
+              </div>
+            </div>
+            <div class="alloc-legend-item">
+              <span class="legend-color-indicator color-profit"></span>
+              <div class="legend-text">
+                <span class="legend-label">Take-Home Profit</span>
+                <strong class="legend-amount" id="allocLegendProfit">₹0.00 (0.0%)</strong>
+              </div>
+            </div>
+            <div class="alloc-legend-item">
+              <span class="legend-color-indicator color-tax"></span>
+              <div class="legend-text">
+                <span class="legend-label">Estimated Tax</span>
+                <strong class="legend-amount" id="allocLegendTax">₹0.00 (0.0%)</strong>
+              </div>
+            </div>
+            <div class="alloc-legend-item">
+              <span class="legend-color-indicator color-fee"></span>
+              <div class="legend-text">
+                <span class="legend-label">Trading Fees</span>
+                <strong class="legend-amount" id="allocLegendFee">₹0.00 (0.0%)</strong>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -269,35 +339,91 @@
           </div>
         </div>
 
-        <!-- Full Detailed Breakdown Grid -->
-        <div class="breakdown-grid">
-          <div class="breakdown-item">
-            <span class="item-label">Total Capital Invested</span>
-            <span class="item-value" id="totalInvestmentDisplay">₹0.00</span>
+        <!-- Professional Executive Financial Audit Ledger -->
+        <div class="audit-ledger-card">
+          <div class="audit-ledger-header">
+            <div class="ledger-header-left">
+              <span class="ledger-title">Financial Audit Ledger (Waterfall Breakdown)</span>
+              <span class="ledger-subtitle">Step-by-step mathematical reconciliation from gross exit to take-home profit</span>
+            </div>
+            <button type="button" id="copyAuditReportBtn" class="btn-action-sm" title="Copy full audit breakdown to clipboard">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>Copy Audit Summary</span>
+            </button>
           </div>
-          <div class="breakdown-item">
-            <span class="item-label">Gross Exit Value</span>
-            <span class="item-value" id="totalExitDisplay">₹0.00</span>
-          </div>
-          <div class="breakdown-item">
-            <span class="item-label">Exchange Trading Fees</span>
-            <span class="item-value" id="totalFeeDisplay">₹0.00</span>
-          </div>
-          <div class="breakdown-item">
-            <span class="item-label">Profit Before Tax (PBT)</span>
-            <span class="item-value" id="preTaxProfitDisplay">₹0.00</span>
-          </div>
-          <div class="breakdown-item">
-            <span class="item-label" id="profitTaxBreakdownLabel">Total Estimated Tax Liability</span>
-            <span class="item-value tax-highlight" id="profitTaxDisplay">₹0.00</span>
-          </div>
-          <div class="breakdown-item">
-            <span class="item-label" id="tdsBreakdownLabel">TDS Advance Tax Credit</span>
-            <span class="item-value text-deducted" id="tdsDisplay">₹0.00</span>
-          </div>
-          <div class="breakdown-item full-width">
-            <span class="item-label">Final Take-Home Profit After Tax (PAT)</span>
-            <span class="item-value fee-highlight" id="finalNetProfitDisplay">₹0.00</span>
+
+          <div class="ledger-table-wrap">
+            <table class="ledger-table">
+              <tbody>
+                <tr class="ledger-row row-proceeds">
+                  <td class="ledger-sign"><span class="op-badge op-plus" title="Gross Proceeds Added">+</span></td>
+                  <td class="ledger-step">
+                    <div class="step-title">Gross Exit Value (Total Consideration)</div>
+                    <div class="step-desc">Total sell value realized before exchange deductions (Qty × Sell Price)</div>
+                  </td>
+                  <td class="ledger-amount"><span class="item-value" id="totalExitDisplay">₹0.00</span></td>
+                </tr>
+
+                <tr class="ledger-row row-cost">
+                  <td class="ledger-sign"><span class="op-badge op-minus" title="Acquisition Cost Deducted">−</span></td>
+                  <td class="ledger-step">
+                    <div class="step-title">Total Capital Invested (Cost of Acquisition)</div>
+                    <div class="step-desc">Allowable purchase cost base under tax regulations (Qty × Buy Price)</div>
+                  </td>
+                  <td class="ledger-amount"><span class="item-value" id="totalInvestmentDisplay">₹0.00</span></td>
+                </tr>
+
+                <tr class="ledger-row row-fee">
+                  <td class="ledger-sign"><span class="op-badge op-minus" title="Trading Fees Deducted">−</span></td>
+                  <td class="ledger-step">
+                    <div class="step-title">Exchange Trading Fees</div>
+                    <div class="step-desc">Total spot platform brokerages paid across buy and sell executions</div>
+                  </td>
+                  <td class="ledger-amount"><span class="item-value text-fees" id="totalFeeDisplay">₹0.00</span></td>
+                </tr>
+
+                <tr class="ledger-row row-subtotal">
+                  <td class="ledger-sign"><span class="op-badge op-equals" title="Subtotal">=</span></td>
+                  <td class="ledger-step">
+                    <div class="step-title font-bold">Realized Profit Before Tax (PBT)</div>
+                    <div class="step-desc">Economic gain or loss before statutory taxation (Exit Value − Cost − Fees)</div>
+                  </td>
+                  <td class="ledger-amount"><span class="item-value font-bold" id="preTaxProfitDisplay">₹0.00</span></td>
+                </tr>
+
+                <tr class="ledger-row row-tax">
+                  <td class="ledger-sign"><span class="op-badge op-minus" title="Tax Liability Deducted">−</span></td>
+                  <td class="ledger-step">
+                    <div class="step-title" id="profitTaxBreakdownLabel">Total Estimated Government Tax Liability</div>
+                    <div class="step-desc" id="profitTaxBreakdownSub">Statutory income tax liability computed on positive net profits</div>
+                  </td>
+                  <td class="ledger-amount"><span class="item-value tax-highlight" id="profitTaxDisplay">₹0.00</span></td>
+                </tr>
+
+                <tr class="ledger-row row-tds">
+                  <td class="ledger-sign"><span class="op-badge op-check" title="Advance Tax Credited">✓</span></td>
+                  <td class="ledger-step">
+                    <div class="step-title" id="tdsBreakdownLabel">TDS Advance Tax Credit</div>
+                    <div class="step-desc" id="tdsBreakdownSub">TDS withheld by exchange; set-off against your final annual tax bill</div>
+                  </td>
+                  <td class="ledger-amount"><span class="item-value text-deducted" id="tdsDisplay">₹0.00</span></td>
+                </tr>
+
+                <tr class="ledger-row row-final">
+                  <td class="ledger-sign"><span class="op-badge op-star" title="Final Net Take-Home">★</span></td>
+                  <td class="ledger-step">
+                    <div class="step-title text-pat-title">Final Take-Home Profit After Tax (PAT)</div>
+                    <div class="step-desc">Net profit in your pocket after all fees, taxes, and advance set-offs</div>
+                  </td>
+                  <td class="ledger-amount">
+                    <span class="item-value pat-value-highlight" id="finalNetProfitDisplay">₹0.00</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
@@ -586,22 +712,42 @@
     <!-- Trade History / Audit Log -->
     <section class="card history-card">
       <div class="card-header">
-        <h2>Recent Calculations (Session History)</h2>
-        <button type="button" id="clearHistoryBtn" class="btn-text">Clear History</button>
+        <div class="history-title-wrap">
+          <h2>Recent Calculations (Session Audit Log)</h2>
+          <span class="history-count-pill" id="historyCountPill">0 trades</span>
+        </div>
+        <div class="history-actions">
+          <button type="button" id="copyHistoryBtn" class="btn-action-sm" title="Copy table to clipboard for Excel / Sheets">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>Copy Table</span>
+          </button>
+          <button type="button" id="exportCsvBtn" class="btn-action-sm" title="Download official CSV report">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Export CSV</span>
+          </button>
+          <button type="button" id="clearHistoryBtn" class="btn-text">Clear</button>
+        </div>
       </div>
       <div class="table-responsive">
         <table class="history-table">
           <thead>
             <tr>
-              <th>Country &amp; Year</th>
-              <th>Qty</th>
-              <th>Buy Price</th>
-              <th>Sell Price</th>
-              <th>Profit Before Tax</th>
-              <th>Estimated Tax</th>
-              <th>TDS Deducted</th>
-              <th>Take-Home Profit</th>
-              <th>Net ROI</th>
+              <th class="col-country">Country &amp; Year</th>
+              <th class="col-num">Qty</th>
+              <th class="col-num">Buy Price</th>
+              <th class="col-num">Sell Price</th>
+              <th class="col-num">Profit Before Tax</th>
+              <th class="col-num">Estimated Tax</th>
+              <th class="col-num">TDS Deducted</th>
+              <th class="col-num">Take-Home Profit</th>
+              <th class="col-roi">Net ROI</th>
             </tr>
           </thead>
           <tbody id="historyTableBody">
@@ -612,6 +758,14 @@
         </table>
       </div>
     </section>
+  </div>
+
+  <!-- Global Fintech Toast Notification -->
+  <div id="toastNotification" class="toast-notification" role="status" aria-live="polite">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="toast-icon">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span id="toastMessage">Action completed successfully</span>
   </div>
 
   <script src="script.js"></script>

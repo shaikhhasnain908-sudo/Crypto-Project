@@ -62,6 +62,36 @@ document.addEventListener('DOMContentLoaded', () => {
   const finalNetProfitDisplay = document.getElementById('finalNetProfitDisplay');
   const historyTableBody = document.getElementById('historyTableBody');
 
+  // Allocation Bar elements
+  const allocBarCapital = document.getElementById('allocBarCapital');
+  const allocBarProfit = document.getElementById('allocBarProfit');
+  const allocBarTax = document.getElementById('allocBarTax');
+  const allocBarFee = document.getElementById('allocBarFee');
+  const allocLegendCapital = document.getElementById('allocLegendCapital');
+  const allocLegendProfit = document.getElementById('allocLegendProfit');
+  const allocLegendTax = document.getElementById('allocLegendTax');
+  const allocLegendFee = document.getElementById('allocLegendFee');
+  const allocStatusPill = document.getElementById('allocStatusPill');
+
+  // Executive Audit & Export elements
+  const copyAuditReportBtn = document.getElementById('copyAuditReportBtn');
+  const copyHistoryBtn = document.getElementById('copyHistoryBtn');
+  const exportCsvBtn = document.getElementById('exportCsvBtn');
+  const historyCountPill = document.getElementById('historyCountPill');
+  const toastNotification = document.getElementById('toastNotification');
+  const toastMessage = document.getElementById('toastMessage');
+
+  let toastTimer = null;
+  function showToast(msg) {
+    if (!toastNotification || !toastMessage) return;
+    toastMessage.textContent = msg;
+    toastNotification.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toastNotification.classList.remove('show');
+    }, 2800);
+  }
+
   // Multi-Country Tax Residence Presets
   const countryTaxAndFeePresets = {
     INR: {
@@ -603,11 +633,60 @@ document.addEventListener('DOMContentLoaded', () => {
       statusBadge.className = 'status-badge neutral';
     }
 
+    // Update Capital Allocation Visual Flow Bar (Stripe / Fintech Style)
+    if (allocBarCapital && allocLegendCapital) {
+      if (profitAfterTax >= 0) {
+        const totalBase = Math.max(grossExit, totalInvested, 1);
+        const capPct = Math.min(100, Math.max(0, (totalInvested / totalBase) * 100));
+        const patPct = Math.min(100, Math.max(0, (profitAfterTax / totalBase) * 100));
+        const taxPct = Math.min(100, Math.max(0, (estimatedTaxAmount / totalBase) * 100));
+        const feePct = Math.min(100, Math.max(0, (totalFees / totalBase) * 100));
+
+        allocBarCapital.style.width = `${capPct.toFixed(1)}%`;
+        allocBarProfit.style.width = `${patPct.toFixed(1)}%`;
+        allocBarTax.style.width = `${taxPct.toFixed(1)}%`;
+        allocBarFee.style.width = `${feePct.toFixed(1)}%`;
+
+        allocLegendCapital.textContent = `${formatMoney(totalInvested)} (${capPct.toFixed(1)}%)`;
+        allocLegendProfit.textContent = `${formatMoney(profitAfterTax)} (${patPct.toFixed(1)}%)`;
+        allocLegendTax.textContent = `${formatMoney(estimatedTaxAmount)} (${taxPct.toFixed(1)}%)`;
+        allocLegendFee.textContent = `${formatMoney(totalFees)} (${feePct.toFixed(1)}%)`;
+
+        if (allocStatusPill) {
+          allocStatusPill.textContent = 'Gains Distribution Active';
+          allocStatusPill.className = 'alloc-status-pill status-profit';
+        }
+      } else {
+        const lossAbs = Math.abs(profitAfterTax);
+        const totalBase = Math.max(totalInvested, 1);
+        const preserved = Math.max(0, totalInvested - lossAbs - totalFees);
+        const presPct = Math.min(100, Math.max(0, (preserved / totalBase) * 100));
+        const lossPct = Math.min(100, Math.max(0, (lossAbs / totalBase) * 100));
+        const feePct = Math.min(100, Math.max(0, (totalFees / totalBase) * 100));
+
+        allocBarCapital.style.width = `${presPct.toFixed(1)}%`;
+        allocBarProfit.style.width = '0%';
+        allocBarTax.style.width = `${lossPct.toFixed(1)}%`;
+        allocBarFee.style.width = `${feePct.toFixed(1)}%`;
+
+        allocLegendCapital.textContent = `Capital Preserved: ${formatMoney(preserved)} (${presPct.toFixed(1)}%)`;
+        allocLegendProfit.textContent = `Capital Lost: -${formatMoney(lossAbs)} (${lossPct.toFixed(1)}%)`;
+        allocLegendTax.textContent = `Tax: 0.00 (Loss)`;
+        allocLegendFee.textContent = `${formatMoney(totalFees)} (${feePct.toFixed(1)}%)`;
+
+        if (allocStatusPill) {
+          allocStatusPill.textContent = 'Capital Loss Distribution';
+          allocStatusPill.className = 'alloc-status-pill status-loss';
+        }
+      }
+    }
+
     // Save to calculation audit history
     if (recordHistory) {
       const formattedROI = `${patSign}${Math.abs(roi).toFixed(2)}% ROI`;
       const preset = countryTaxAndFeePresets[currentCode] || countryTaxAndFeePresets.INR;
       const yearLabel = taxYearSelect.value;
+      const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
       addHistoryRecord({
         country: `${preset.country} (${yearLabel})`,
@@ -619,7 +698,8 @@ document.addEventListener('DOMContentLoaded', () => {
         tds: formatMoney(sellTdsAmount),
         pat: `${patSign}${formatMoney(profitAfterTax)}`,
         roi: formattedROI,
-        isProfit: profitAfterTax >= 0
+        isProfit: profitAfterTax >= 0,
+        timestamp
       });
     }
   }
@@ -633,6 +713,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderHistory(animateFirst = false) {
+    if (historyCountPill) {
+      historyCountPill.textContent = `${historyLogs.length} trade${historyLogs.length === 1 ? '' : 's'}`;
+    }
+
     if (historyLogs.length === 0) {
       historyTableBody.innerHTML = `
         <tr>
@@ -645,15 +729,22 @@ document.addEventListener('DOMContentLoaded', () => {
     historyTableBody.innerHTML = historyLogs
       .map((item, index) => `
         <tr class="${animateFirst && index === 0 ? 'new-history-row' : ''}">
-          <td><strong>${item.country}</strong></td>
-          <td>${item.qty}</td>
-          <td>${item.buyPrice}</td>
-          <td>${item.sellPrice}</td>
-          <td class="${item.pbt.startsWith('+') ? 'text-profit' : 'text-loss'}">${item.pbt}</td>
-          <td class="tax-highlight">${item.tax}</td>
-          <td class="text-deducted">${item.tds}</td>
-          <td class="${item.isProfit ? 'text-profit' : 'text-loss'}"><strong>${item.pat}</strong></td>
-          <td class="${item.isProfit ? 'text-profit' : 'text-loss'}">${item.roi}</td>
+          <td class="col-country">
+            <span class="history-country-title">${item.country}</span>
+            ${item.timestamp ? `<span class="history-time-sub">${item.timestamp}</span>` : ''}
+          </td>
+          <td class="col-num">${item.qty}</td>
+          <td class="col-num">${item.buyPrice}</td>
+          <td class="col-num">${item.sellPrice}</td>
+          <td class="col-num ${item.pbt.startsWith('+') ? 'text-profit' : 'text-loss'}">${item.pbt}</td>
+          <td class="col-num tax-highlight">${item.tax}</td>
+          <td class="col-num text-deducted">${item.tds}</td>
+          <td class="col-num ${item.isProfit ? 'text-profit' : 'text-loss'}"><strong>${item.pat}</strong></td>
+          <td class="col-roi">
+            <span class="roi-pill ${item.isProfit ? 'roi-profit' : 'roi-loss'}">
+              ${item.isProfit ? '▲ +' : '▼ -'}${item.roi.replace('ROI', '').replace('+', '').replace('-', '').trim()}
+            </span>
+          </td>
         </tr>
       `)
       .join('');
@@ -692,14 +783,118 @@ document.addEventListener('DOMContentLoaded', () => {
     tdsDisplay.textContent = `${currentSymbol}0.00`;
     finalNetProfitDisplay.textContent = `${currentSymbol}0.00`;
 
+    // Reset allocation bar
+    if (allocBarCapital && allocLegendCapital) {
+      allocBarCapital.style.width = '0%';
+      allocBarProfit.style.width = '0%';
+      allocBarTax.style.width = '0%';
+      allocBarFee.style.width = '0%';
+      allocLegendCapital.textContent = `${currentSymbol}0.00 (0.0%)`;
+      allocLegendProfit.textContent = `${currentSymbol}0.00 (0.0%)`;
+      allocLegendTax.textContent = `${currentSymbol}0.00 (0.0%)`;
+      allocLegendFee.textContent = `${currentSymbol}0.00 (0.0%)`;
+      if (allocStatusPill) {
+        allocStatusPill.textContent = 'Awaiting Calculation';
+        allocStatusPill.className = 'alloc-status-pill';
+      }
+    }
+
     statusBadge.textContent = 'Awaiting Input';
     statusBadge.className = 'status-badge neutral';
+    showToast('Calculator parameters reset');
   });
 
   clearHistoryBtn.addEventListener('click', () => {
     historyLogs = [];
     renderHistory(false);
+    showToast('Calculation audit history cleared');
   });
+
+  // Copy Full Executive Audit Report
+  if (copyAuditReportBtn) {
+    copyAuditReportBtn.addEventListener('click', () => {
+      const countryPreset = countryTaxAndFeePresets[currentCode] || countryTaxAndFeePresets.INR;
+      const reportText = [
+        `===========================================`,
+        `CRYPTO PROFIT & TAX AUDIT SUMMARY`,
+        `===========================================`,
+        `Jurisdiction: ${countryPreset.country} (${taxYearSelect.value})`,
+        `Quantity: ${coinQtyInput.value || '1'}`,
+        `-------------------------------------------`,
+        `[+] Gross Exit Value:     ${totalExitDisplay.textContent}`,
+        `[−] Cost of Acquisition:  ${totalInvestmentDisplay.textContent}`,
+        `[−] Exchange Spot Fees:   ${totalFeeDisplay.textContent}`,
+        `[=] Profit Before Tax:    ${preTaxProfitDisplay.textContent}`,
+        `[−] Estimated Tax Due:    ${profitTaxDisplay.textContent}`,
+        `[✓] TDS Advance Credit:   ${tdsDisplay.textContent}`,
+        `-------------------------------------------`,
+        `[★] TAKE-HOME PROFIT:     ${finalNetProfitDisplay.textContent}`,
+        `Net ROI:                  ${roiSubDisplay.textContent}`,
+        `===========================================`
+      ].join('\n');
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(reportText).then(() => {
+          showToast('Audit report copied to clipboard!');
+        });
+      }
+    });
+  }
+
+  // Export Session History to CSV
+  if (exportCsvBtn) {
+    exportCsvBtn.addEventListener('click', () => {
+      if (historyLogs.length === 0) {
+        showToast('No history records to export yet.');
+        return;
+      }
+      const headers = ['Country & Year', 'Quantity', 'Buy Price', 'Sell Price', 'Profit Before Tax', 'Estimated Tax', 'TDS Deducted', 'Take-Home Profit', 'Net ROI', 'Timestamp'];
+      const rows = [headers.join(',')];
+      historyLogs.forEach((item) => {
+        const cleanCountry = `"${item.country.replace(/"/g, '""')}"`;
+        const cleanBuy = `"${item.buyPrice.replace(/"/g, '""')}"`;
+        const cleanSell = `"${item.sellPrice.replace(/"/g, '""')}"`;
+        const cleanPbt = `"${item.pbt.replace(/"/g, '""')}"`;
+        const cleanTax = `"${item.tax.replace(/"/g, '""')}"`;
+        const cleanTds = `"${item.tds.replace(/"/g, '""')}"`;
+        const cleanPat = `"${item.pat.replace(/"/g, '""')}"`;
+        const cleanRoi = `"${item.roi.replace(/"/g, '""')}"`;
+        const cleanTime = `"${item.timestamp || ''}"`;
+        rows.push([cleanCountry, item.qty, cleanBuy, cleanSell, cleanPbt, cleanTax, cleanTds, cleanPat, cleanRoi, cleanTime].join(','));
+      });
+
+      const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const downloadLink = document.createElement('a');
+      downloadLink.href = url;
+      downloadLink.download = `crypto_tax_audit_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      URL.revokeObjectURL(url);
+      showToast('CSV audit report downloaded!');
+    });
+  }
+
+  // Copy Session History Table to Clipboard
+  if (copyHistoryBtn) {
+    copyHistoryBtn.addEventListener('click', () => {
+      if (historyLogs.length === 0) {
+        showToast('No history records to copy yet.');
+        return;
+      }
+      const headers = ['Country & Year\tQuantity\tBuy Price\tSell Price\tProfit Before Tax\tEstimated Tax\tTDS Deducted\tTake-Home Profit\tNet ROI'];
+      const rows = historyLogs.map((item) =>
+        `${item.country}\t${item.qty}\t${item.buyPrice}\t${item.sellPrice}\t${item.pbt}\t${item.tax}\t${item.tds}\t${item.pat}\t${item.roi}`
+      );
+      const tsvContent = [headers, ...rows].join('\n');
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(tsvContent).then(() => {
+          showToast('Table copied to clipboard for Excel / Google Sheets!');
+        });
+      }
+    });
+  }
 
   // ==========================================
   // CRYPTO-TO-MONEY CONVERTER MODULE
