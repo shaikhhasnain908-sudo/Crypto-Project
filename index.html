@@ -212,91 +212,21 @@
         <!-- 3 Key High-Level Highlight Cards: Profit Before Tax, Estimated Tax, Profit After Tax -->
         <div class="tax-summary-cards">
           <div class="tax-summary-box">
-            <div class="tax-box-header">
-              <span class="tax-box-title">Profit Before Tax</span>
-              <span class="tax-box-icon pbt-icon" title="Pre-tax economic gain">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                  <polyline points="17 6 23 6 23 12"></polyline>
-                </svg>
-              </span>
-            </div>
+            <span class="tax-box-title">Profit Before Tax</span>
             <div class="tax-box-value neutral" id="pbtHighlightDisplay">₹0.00</div>
-            <span class="tax-box-sub">Gross realized gain before statutory deductions</span>
+            <span class="tax-box-sub">Net profit before government taxes</span>
           </div>
 
           <div class="tax-summary-box tax-liability-box">
-            <div class="tax-box-header">
-              <span class="tax-box-title" id="taxBoxLabel">Estimated Indian Tax (30%)</span>
-              <span class="tax-box-icon tax-icon" title="Estimated tax obligation">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                </svg>
-              </span>
-            </div>
+            <span class="tax-box-title" id="taxBoxLabel">Estimated Indian Tax (30%)</span>
             <div class="tax-box-value tax-color" id="taxHighlightDisplay">₹0.00</div>
             <span class="tax-box-sub" id="taxBoxSub">Sec 115BBH flat tax liability</span>
           </div>
 
           <div class="tax-summary-box primary-box">
-            <div class="tax-box-header">
-              <span class="tax-box-title">Profit After Tax (Take-Home)</span>
-              <span class="tax-box-icon pat-icon" title="Net disposable cash profit">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                </svg>
-              </span>
-            </div>
+            <span class="tax-box-title">Profit After Tax (Take-Home)</span>
             <div class="tax-box-value neutral" id="patHighlightDisplay">₹0.00</div>
             <span class="tax-box-sub" id="roiSubDisplay">0.00% Net ROI</span>
-          </div>
-        </div>
-
-        <!-- Capital Allocation & Flow Visual Bar (Stripe / Fintech Style) -->
-        <div class="allocation-flow-card" id="allocationFlowCard">
-          <div class="allocation-flow-header">
-            <div class="alloc-title-wrap">
-              <span class="alloc-title">Capital Allocation &amp; Returns Flow</span>
-              <span class="alloc-desc">Proportional distribution of trade proceeds</span>
-            </div>
-            <span class="alloc-status-pill" id="allocStatusPill">Awaiting Calculation</span>
-          </div>
-          <div class="allocation-bar-track" id="allocationBarTrack">
-            <div class="alloc-bar-fill alloc-fill-capital" id="allocBarCapital" style="width: 50%;" title="Capital Invested"></div>
-            <div class="alloc-bar-fill alloc-fill-profit" id="allocBarProfit" style="width: 25%;" title="Net Take-Home Profit"></div>
-            <div class="alloc-bar-fill alloc-fill-tax" id="allocBarTax" style="width: 20%;" title="Government Tax"></div>
-            <div class="alloc-bar-fill alloc-fill-fee" id="allocBarFee" style="width: 5%;" title="Exchange Fees"></div>
-          </div>
-          <div class="allocation-legend-grid">
-            <div class="alloc-legend-item">
-              <span class="legend-color-indicator color-capital"></span>
-              <div class="legend-text">
-                <span class="legend-label">Cost Basis</span>
-                <strong class="legend-amount" id="allocLegendCapital">₹0.00 (0.0%)</strong>
-              </div>
-            </div>
-            <div class="alloc-legend-item">
-              <span class="legend-color-indicator color-profit"></span>
-              <div class="legend-text">
-                <span class="legend-label">Take-Home Profit</span>
-                <strong class="legend-amount" id="allocLegendProfit">₹0.00 (0.0%)</strong>
-              </div>
-            </div>
-            <div class="alloc-legend-item">
-              <span class="legend-color-indicator color-tax"></span>
-              <div class="legend-text">
-                <span class="legend-label">Estimated Tax</span>
-                <strong class="legend-amount" id="allocLegendTax">₹0.00 (0.0%)</strong>
-              </div>
-            </div>
-            <div class="alloc-legend-item">
-              <span class="legend-color-indicator color-fee"></span>
-              <div class="legend-text">
-                <span class="legend-label">Trading Fees</span>
-                <strong class="legend-amount" id="allocLegendFee">₹0.00 (0.0%)</strong>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -342,6 +272,38 @@
               <strong id="tdsAlertTitle">Why TDS is not an extra tax:</strong>
               <p id="tdsAlertText">The 1% TDS (Sec 194S) is already deducted at source by Indian crypto exchanges on your sell order and remitted to the Income Tax Dept against your PAN. It acts as an advance tax credit that reduces your final 30% tax liability during annual ITR filing. You do NOT pay 30% + 1%.</p>
             </div>
+          </div>
+        </div>
+
+        <!-- Full Detailed Breakdown Grid -->
+        <div class="breakdown-grid">
+          <div class="breakdown-item">
+            <span class="item-label">Total Capital Invested</span>
+            <span class="item-value" id="totalInvestmentDisplay">₹0.00</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="item-label">Gross Exit Value</span>
+            <span class="item-value" id="totalExitDisplay">₹0.00</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="item-label">Exchange Trading Fees</span>
+            <span class="item-value" id="totalFeeDisplay">₹0.00</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="item-label">Profit Before Tax (PBT)</span>
+            <span class="item-value" id="preTaxProfitDisplay">₹0.00</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="item-label" id="profitTaxBreakdownLabel">Total Estimated Tax Liability</span>
+            <span class="item-value tax-highlight" id="profitTaxDisplay">₹0.00</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="item-label" id="tdsBreakdownLabel">TDS Advance Tax Credit</span>
+            <span class="item-value text-deducted" id="tdsDisplay">₹0.00</span>
+          </div>
+          <div class="breakdown-item full-width">
+            <span class="item-label">Final Take-Home Profit After Tax (PAT)</span>
+            <span class="item-value fee-highlight" id="finalNetProfitDisplay">₹0.00</span>
           </div>
         </div>
       </section>
