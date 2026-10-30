@@ -22,6 +22,14 @@
   padding: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 64px;
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+}
+
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: var(--bg-primary);
@@ -29,6 +37,10 @@ body {
   line-height: 1.5;
   padding: 32px 16px;
   animation: pageFadeIn 0.5s ease-out;
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+  -webkit-font-smoothing: antialiased;
 }
 
 .app-container {
@@ -1978,67 +1990,121 @@ body {
 
 @media (max-width: 768px) {
   body {
-    padding: 12px 10px;
+    padding: 10px 8px;
     -webkit-text-size-adjust: 100%;
+    overflow-x: hidden;
   }
 
   .app-container {
-    gap: 14px;
+    gap: 12px;
     max-width: 100%;
+    width: 100%;
   }
 
   /* Header Optimization */
   .app-header {
-    gap: 12px;
+    gap: 10px;
+    padding: 0 4px;
   }
 
   .logo-badge {
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
     border-radius: 10px;
     flex-shrink: 0;
   }
 
   .logo-badge svg {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
   }
 
   .app-header h1 {
-    font-size: 1.25rem;
-    line-height: 1.3;
+    font-size: 1.2rem;
+    line-height: 1.25;
   }
 
   .app-header p {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     line-height: 1.35;
   }
 
   /* Card padding reduction to maximize usable content width */
   .card {
-    padding: 16px 14px;
+    padding: 14px 12px;
     border-radius: 12px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
   }
 
+  /* Responsive Card Headers */
   .card-header {
-    margin-bottom: 14px;
+    margin-bottom: 12px;
+    width: 100%;
+  }
+
+  .input-card .card-header,
+  .result-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .converter-card .card-header,
+  .c2c-card .card-header,
+  .history-card .card-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
 
   .card-header h2 {
-    font-size: 1.05rem;
+    font-size: 1.02rem;
   }
 
-  /* Tool Navigation - Smooth Touch-Scroll Tab Bar */
+  .converter-header-title {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .converter-icon-badge,
+  .c2c-icon-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+  }
+
+  .converter-icon-badge svg,
+  .c2c-icon-badge svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .section-subtext {
+    font-size: 0.76rem;
+  }
+
+  /* Tool Navigation - Sticky Smooth Touch-Scroll Tab Bar */
   .tool-nav {
+    position: sticky;
+    top: 6px;
+    z-index: 99;
     width: 100%;
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     padding: 4px;
     gap: 6px;
     border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 
   .tool-nav::-webkit-scrollbar {
@@ -2047,20 +2113,29 @@ body {
 
   .tool-nav-btn {
     flex-shrink: 0;
-    padding: 8px 14px;
-    font-size: 0.8rem;
+    padding: 8px 12px;
+    font-size: 0.78rem;
     white-space: nowrap;
-    min-height: 40px;
+    min-height: 38px;
     border-radius: 8px;
   }
 
-  /* Region Quick Filter Tabs - Thumb Friendly */
+  .tool-nav-btn svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  /* Region Quick Filter Tabs - Smooth Thumb Swiping */
   .region-tabs {
-    gap: 5px;
-    margin-bottom: 12px;
-    padding-bottom: 6px;
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    gap: 5px;
+    margin-bottom: 12px;
+    padding-bottom: 4px;
   }
 
   .region-tabs::-webkit-scrollbar {
@@ -2068,71 +2143,115 @@ body {
   }
 
   .region-tab {
+    flex-shrink: 0;
     padding: 6px 12px;
-    font-size: 0.74rem;
-    min-height: 36px;
+    font-size: 0.72rem;
+    min-height: 34px;
   }
 
-  /* Form Fields - Ergonomic Touch & iOS Safari Auto-Zoom Prevention */
-  .form-row {
+  /* Form Fields - Touch Ergonomics & Prevent iOS Safari Auto-Zoom */
+  .main-grid {
     grid-template-columns: 1fr;
     gap: 12px;
   }
 
-  /* Setting font-size to 16px prevents iOS Safari from automatically zooming the viewport */
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  /* 16px font-size prevents iOS Safari from automatically zooming into the field */
   .form-control,
   .converter-num-input,
   .custom-rate-input,
   select.form-control {
     font-size: 16px !important;
     min-height: 44px;
+    border-radius: 8px;
+  }
+
+  .form-group label {
+    font-size: 0.82rem;
+  }
+
+  .field-hint {
+    font-size: 0.7rem;
   }
 
   .input-addon-wrap {
     min-height: 44px;
-    padding-left: 12px;
+    padding-left: 10px;
+    border-radius: 8px;
   }
 
   .input-addon-wrap .addon {
-    font-size: 1rem;
-    margin-right: 8px;
+    font-size: 0.95rem;
+    margin-right: 6px;
   }
 
   .input-addon-wrap .form-control.with-addon {
     font-size: 16px !important;
-    padding: 10px 10px 10px 0 !important;
+    min-height: 42px;
+    padding: 8px 10px 8px 0 !important;
   }
 
   .btn-primary {
     min-height: 46px;
-    font-size: 0.98rem;
+    font-size: 0.95rem;
     padding: 12px;
-    border-radius: 10px;
+    border-radius: 8px;
+    margin-top: 4px;
   }
 
   /* 3 Summary Cards */
   .tax-summary-cards {
     grid-template-columns: 1fr;
-    gap: 10px;
-    margin-bottom: 14px;
+    gap: 8px;
+    margin-bottom: 12px;
   }
 
   .tax-summary-box {
     padding: 12px 14px;
+    border-radius: 8px;
+  }
+
+  .tax-box-title {
+    font-size: 0.72rem;
   }
 
   .tax-box-value {
     font-size: 1.35rem;
+    margin: 2px 0;
+  }
+
+  .tax-box-sub {
+    font-size: 0.7rem;
   }
 
   /* Capital Allocation Flow Bar */
   .allocation-flow-card {
     padding: 12px 14px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+  }
+
+  .allocation-flow-header {
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .alloc-title {
+    font-size: 0.82rem;
+  }
+
+  .alloc-desc {
+    font-size: 0.68rem;
   }
 
   .allocation-bar-track {
-    height: 14px;
+    height: 12px;
     margin-bottom: 10px;
   }
 
@@ -2152,92 +2271,63 @@ body {
   /* TDS Settlement Card */
   .tds-settlement-card {
     padding: 12px 14px;
-    margin-bottom: 14px;
+    margin-bottom: 4px;
+    border-radius: 8px;
   }
 
   .settlement-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .settlement-title {
+    font-size: 0.82rem;
   }
 
   .settlement-grid {
     grid-template-columns: 1fr;
     gap: 8px;
+    margin-bottom: 10px;
   }
 
   .settlement-item {
-    padding: 8px 12px;
+    padding: 8px 10px;
   }
 
   .tds-info-alert {
     padding: 10px 12px;
+    border-radius: 8px;
   }
 
-  /* Financial Audit Ledger Card */
-  .audit-ledger-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-    padding: 10px 12px;
-  }
-
-  .audit-ledger-header #copyAuditReportBtn {
-    width: 100%;
-    justify-content: center;
-    min-height: 38px;
-    font-size: 0.8rem;
-  }
-
-  .ledger-sign {
-    padding: 8px 4px 8px 8px;
-    width: 30px;
-  }
-
-  .op-badge {
-    width: 20px;
-    height: 20px;
-    font-size: 0.76rem;
-  }
-
-  .ledger-step {
-    padding: 8px 6px;
-  }
-
-  .step-title {
-    font-size: 0.78rem;
-  }
-
-  .step-desc {
-    font-size: 0.67rem;
-  }
-
-  .ledger-amount {
-    padding: 8px 10px 8px 4px;
-  }
-
-  .ledger-amount .item-value {
-    font-size: 0.88rem;
-  }
-
-  .pat-value-highlight {
-    font-size: 1.02rem !important;
+  .tds-alert-content {
+    font-size: 0.72rem;
   }
 
   /* Crypto-to-Money Converter */
+  .rate-status-wrap {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   .converter-inputs-grid {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 10px;
   }
 
   .converter-box {
-    padding: 14px 12px;
+    padding: 12px 10px;
+    border-radius: 8px;
   }
 
   .converter-box-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
+    width: 100%;
   }
 
   .select-inline-wrap {
@@ -2252,12 +2342,14 @@ body {
   }
 
   .converter-input-wrap {
-    min-height: 48px;
+    min-height: 46px;
     padding: 4px 10px;
+    border-radius: 8px;
   }
 
   .converter-num-input {
     font-size: 1.35rem;
+    padding: 4px 0;
   }
 
   .quick-preset-chips {
@@ -2268,6 +2360,16 @@ body {
     padding: 5px 10px;
     font-size: 0.76rem;
     min-height: 32px;
+    border-radius: 6px;
+  }
+
+  .converter-swap-wrap {
+    margin: 2px 0;
+  }
+
+  .swap-direction-btn {
+    width: 42px;
+    height: 42px;
   }
 
   .converter-summary-banner {
@@ -2275,6 +2377,7 @@ body {
     align-items: stretch;
     gap: 12px;
     padding: 12px 14px;
+    border-radius: 8px;
   }
 
   .conversion-headline {
@@ -2282,12 +2385,14 @@ body {
     justify-content: center;
     text-align: center;
     flex-wrap: wrap;
+    word-break: break-all;
   }
 
   .conversion-rate-editor {
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
+    width: 100%;
   }
 
   .rate-editor-left {
@@ -2312,19 +2417,58 @@ body {
   }
 
   /* Coin-to-Coin Converter */
+  .c2c-popular-wrap {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .c2c-preset-pairs {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 6px;
+    padding-bottom: 4px;
+  }
+
+  .c2c-preset-pairs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .preset-pair-btn {
+    flex-shrink: 0;
+    padding: 5px 10px;
+    min-height: 32px;
+    font-size: 0.72rem;
+  }
+
   .c2c-grid {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 10px;
   }
 
   .c2c-box {
-    padding: 14px 12px;
+    padding: 12px 10px;
+    border-radius: 8px;
   }
 
   .c2c-box-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
+    width: 100%;
+  }
+
+  .c2c-middle-controls {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    margin: 4px 0;
   }
 
   .c2c-breakdown-banner {
@@ -2332,6 +2476,7 @@ body {
     align-items: stretch;
     gap: 12px;
     padding: 12px 14px;
+    border-radius: 8px;
   }
 
   .c2c-rate-main {
@@ -2339,10 +2484,12 @@ body {
   }
 
   .c2c-rate-headline {
-    font-size: 1.08rem;
+    font-size: 1.05rem;
+    word-break: break-all;
   }
 
   .c2c-breakdown-items {
+    width: 100%;
     flex-direction: column;
     align-items: stretch;
     gap: 8px;
@@ -2356,11 +2503,13 @@ body {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
   }
 
   /* Live Genuine Market Prices Grid - 2 balanced columns */
   .genuine-prices-section {
     padding: 12px 14px;
+    border-radius: 8px;
   }
 
   .genuine-prices-header {
@@ -2379,7 +2528,7 @@ body {
   }
 
   .coin-pill-sym {
-    font-size: 0.78rem;
+    font-size: 0.76rem;
   }
 
   .coin-pill-val {
@@ -2387,7 +2536,7 @@ body {
   }
 
   .coin-pill-usd {
-    font-size: 0.68rem;
+    font-size: 0.66rem;
   }
 
   /* Session Audit Log & Table Controls */
@@ -2395,6 +2544,13 @@ body {
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
+  }
+
+  .history-title-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
   }
 
   .history-actions {
@@ -2436,10 +2592,21 @@ body {
     flex-shrink: 0;
   }
 
+  .table-responsive {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+  }
+
   .history-table th,
   .history-table td {
     padding: 8px 10px;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
+    white-space: nowrap;
   }
 
   /* Mobile Toast */
@@ -2448,6 +2615,7 @@ body {
     right: 12px;
     bottom: 14px;
     width: auto;
+    max-width: calc(100% - 24px);
     justify-content: center;
     font-size: 0.8rem;
     padding: 10px 14px;
@@ -2457,11 +2625,11 @@ body {
 /* Ultra-Compact Screens (e.g. Galaxy Z Fold outer screen 320px - 360px) */
 @media (max-width: 360px) {
   body {
-    padding: 8px 4px;
+    padding: 6px 4px;
   }
 
   .card {
-    padding: 12px 10px;
+    padding: 10px 8px;
   }
 
   .coin-prices-grid {
