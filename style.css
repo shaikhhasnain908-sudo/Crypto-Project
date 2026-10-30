@@ -92,7 +92,7 @@ body {
   gap: 24px;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 768px) {
   .main-grid {
     grid-template-columns: 1fr;
   }

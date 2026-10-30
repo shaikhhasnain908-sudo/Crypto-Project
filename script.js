@@ -765,7 +765,7 @@ document.addEventListener('DOMContentLoaded', () => {
     calculatePnL(true);
 
     // On mobile devices, smoothly scroll down to the result summary so results are immediately visible
-    if (window.innerWidth <= 860) {
+    if (window.innerWidth <= 768) {
       const resultCard = document.querySelector('.result-card');
       if (resultCard) {
         resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
