@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypto Profit & Loss Calculator - Genuine Country Fees & Taxes</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="logo-badge">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path>
+          <path d="M12 6v2m0 8v2"></path>
+        </svg>
+      </div>
+      <div>
+        <h1>Crypto P&amp;L Calculator</h1>
+        <p>Accurate crypto returns with genuine exchange fees, country TDS, and capital gains taxes.</p>
+      </div>
+    </header>
+
+    <div class="main-grid">
+      <!-- Calculator Form Section -->
+      <section class="card input-card">
+        <div class="card-header">
+          <h2>Trade Parameters</h2>
+          <button type="button" id="resetBtn" class="btn-text">Reset</button>
+        </div>
+
+        <form id="pnlForm" autocomplete="off">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="currencySelect">Country &amp; Currency</label>
+              <select id="currencySelect" class="form-control">
+                <option value="INR" selected>🇮🇳 INR (₹) - India (1% TDS + 30% Tax)</option>
+                <option value="USD">🇺🇸 USD ($) - USA (0.1% Fee + 15% CGT)</option>
+                <option value="EUR">🇪🇺 EUR (€) - Europe (0.15% Fee + 30% Flat Tax)</option>
+                <option value="GBP">🇬🇧 GBP (£) - UK (0.2% Fee + 20% CGT)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="coinQuantity">Coin Quantity</label>
+              <input type="number" id="coinQuantity" class="form-control" placeholder="e.g. 0.5 BTC" step="any" min="0"
+                required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="buyPrice">Buy Price (Per Coin)</label>
+              <div class="input-addon-wrap">
+                <span class="addon currency-symbol">₹</span>
+                <input type="number" id="buyPrice" class="form-control with-addon" placeholder="0.00" step="any" min="0"
+                  required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="sellPrice">Sell Price (Per Coin)</label>
+              <div class="input-addon-wrap">
+                <span class="addon currency-symbol">₹</span>
+                <input type="number" id="sellPrice" class="form-control with-addon" placeholder="0.00" step="any"
+                  min="0" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- Genuine Exchange Trading Fees -->
+          <div class="form-section-title">Exchange Trading Fees</div>
+          <div class="form-row">
+            <div class="form-group">
+              <div class="label-with-badge">
+                <label for="buyFee">Buy Fee (%)</label>
+                <span class="auto-badge">Auto-set</span>
+              </div>
+              <input type="number" id="buyFee" class="form-control" placeholder="0.2" step="any" min="0" value="0.2">
+              <span class="field-hint" id="buyFeeHint">CoinDCX / WazirX spot fee: 0.20%</span>
+            </div>
+            <div class="form-group">
+              <div class="label-with-badge">
+                <label for="sellFee">Sell Fee (%)</label>
+                <span class="auto-badge">Auto-set</span>
+              </div>
+              <input type="number" id="sellFee" class="form-control" placeholder="0.2" step="any" min="0" value="0.2">
+              <span class="field-hint" id="sellFeeHint">CoinDCX / WazirX spot fee: 0.20%</span>
+            </div>
+          </div>
+
+          <!-- Genuine Country Tax Provisions -->
+          <div class="form-section-title">Genuine Country Taxes &amp; Deductions</div>
+          <div class="form-row">
+            <div class="form-group">
+              <div class="label-with-badge">
+                <label for="sellTds" id="sellTdsLabel">Sell TDS / Withholding (%)</label>
+                <span class="auto-badge tax-badge">Tax</span>
+              </div>
+              <input type="number" id="sellTds" class="form-control" placeholder="1.0" step="any" min="0" value="1.0">
+              <span class="field-hint" id="sellTdsHint">Section 194S: 1.0% TDS deducted at source by Indian exchanges on every sell order.</span>
+            </div>
+
+            <div class="form-group">
+              <div class="label-with-badge">
+                <label for="profitTax" id="profitTaxLabel">Profit / Capital Gains Tax (%)</label>
+                <label class="toggle-switch-inline">
+                  <input type="checkbox" id="includeProfitTax" checked>
+                  <span class="toggle-text">Apply</span>
+                </label>
+              </div>
+              <input type="number" id="profitTax" class="form-control" placeholder="30.0" step="any" min="0" value="30.0">
+              <span class="field-hint" id="profitTaxHint">Section 115BBH: 30% flat tax on net crypto profits.</span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary">Calculate Result</button>
+        </form>
+      </section>
+
+      <!-- Results Display Section -->
+      <section class="card result-card">
+        <div class="card-header">
+          <h2>Summary &amp; Performance</h2>
+          <span class="status-badge neutral" id="statusBadge">Awaiting Input</span>
+        </div>
+
+        <div class="hero-metric">
+          <span class="metric-label" id="heroMetricLabel">Net In-Hand Profit / Loss</span>
+          <div class="metric-value neutral" id="netProfitDisplay">₹0.00</div>
+          <div class="roi-badge neutral" id="roiDisplay">0.00% ROI</div>
+          <div class="hero-subtext" id="heroSubtext">After exchange fees, TDS, and capital gains tax</div>
+        </div>
+
+        <div class="breakdown-grid">
+          <div class="breakdown-item">
+            <span class="item-label">Total Invested</span>
+            <span class="item-value" id="totalInvestmentDisplay">₹0.00</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="item-label">Gross Exit Value</span>
+            <span class="item-value" id="totalExitDisplay">₹0.00</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="item-label">Total Exchange Fees</span>
+            <span class="item-value" id="totalFeeDisplay">₹0.00</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="item-label" id="tdsBreakdownLabel">Sell TDS Tax</span>
+            <span class="item-value tax-highlight" id="tdsDisplay">₹0.00</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="item-label" id="profitTaxBreakdownLabel">Profit / Capital Gains Tax</span>
+            <span class="item-value tax-highlight" id="profitTaxDisplay">₹0.00</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="item-label">Pre-Tax Net Profit</span>
+            <span class="item-value" id="preTaxProfitDisplay">₹0.00</span>
+          </div>
+          <div class="breakdown-item full-width">
+            <span class="item-label">Total Deductions (Fees + Taxes)</span>
+            <span class="item-value fee-highlight" id="totalDeductionsDisplay">₹0.00</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Trade History / Audit Log -->
+    <section class="card history-card">
+      <div class="card-header">
+        <h2>Recent Calculations (Session History)</h2>
+        <button type="button" id="clearHistoryBtn" class="btn-text">Clear History</button>
+      </div>
+      <div class="table-responsive">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Country</th>
+              <th>Qty</th>
+              <th>Buy Price</th>
+              <th>Sell Price</th>
+              <th>Total Invested</th>
+              <th>Fees &amp; Taxes</th>
+              <th>Net In-Hand P&amp;L</th>
+              <th>ROI</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody">
+            <tr>
+              <td colspan="8" class="empty-state">No calculations saved yet. Enter trade numbers above and click Calculate.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
