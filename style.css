@@ -1308,6 +1308,21 @@ select.select-compact {
 }
 
 /* Tool Switcher / Navigation Bar */
+.nav-label-mobile {
+  display: none;
+}
+
+.nav-label-desktop {
+  display: inline;
+}
+
+#calculatorSection,
+#converterSection,
+#c2cSection,
+#historySection {
+  scroll-margin-top: 74px;
+}
+
 .tool-nav {
   display: flex;
   align-items: center;
@@ -2131,25 +2146,38 @@ select.select-compact {
     font-size: 0.76rem;
   }
 
-  /* Tool Navigation - Sticky Smooth Touch-Scroll Tab Bar */
+  /* Tool Navigation - 3-Option Segmented Control: ALL 3 OPTIONS VISIBLE ON MAIN DISPLAY WITHOUT SIDE-SCROLL */
+  .nav-label-desktop {
+    display: none;
+  }
+
+  .nav-label-mobile {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.15;
+    white-space: nowrap;
+    letter-spacing: -0.01em;
+  }
+
   .tool-nav {
     position: sticky;
     top: 6px;
     z-index: 99;
     width: 100%;
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    background: rgba(255, 255, 255, 0.96);
+    max-width: 100%;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    padding: 4px;
+    overflow: hidden; /* Fully eliminates side scroll */
+    background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    padding: 4px;
-    gap: 6px;
-    border-radius: 10px;
-    border: 1px solid rgba(226, 232, 240, 0.9);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    border: 1px solid rgba(226, 232, 240, 0.95);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
   }
 
   .tool-nav::-webkit-scrollbar {
@@ -2157,33 +2185,39 @@ select.select-compact {
   }
 
   .tool-nav-btn {
-    flex-shrink: 0;
-    display: inline-flex;
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 8px 12px;
-    font-size: 0.78rem;
-    white-space: nowrap;
-    min-height: 42px;
+    text-align: center;
+    gap: 3px;
+    padding: 6px 2px;
+    min-height: 48px;
     border-radius: 8px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.15;
+    box-sizing: border-box;
+    white-space: nowrap;
   }
 
   .tool-nav-btn svg {
-    width: 15px;
-    height: 15px;
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
   }
 
-  /* Region Quick Filter Tabs - Smooth Thumb Swiping */
+  /* Region Quick Filter Tabs - Flex Wrap so no side scroll is needed */
   .region-tabs {
     width: 100%;
     display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    flex-wrap: wrap;
     gap: 5px;
     margin-bottom: 12px;
-    padding-bottom: 4px;
+    padding-bottom: 0;
+    overflow: visible;
   }
 
   .region-tabs::-webkit-scrollbar {
@@ -2191,8 +2225,16 @@ select.select-compact {
   }
 
   .region-tab {
-    flex-shrink: 0;
-    padding: 6px 12px;
+    flex: 1 1 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6px 8px;
+    font-size: 0.72rem;
+    min-height: 34px;
+    white-space: nowrap;
+  }
     font-size: 0.72rem;
     min-height: 34px;
   }
@@ -2475,12 +2517,10 @@ select.select-compact {
   .c2c-preset-pairs {
     width: 100%;
     display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    flex-wrap: wrap;
     gap: 6px;
-    padding-bottom: 4px;
+    padding-bottom: 0;
+    overflow: visible;
   }
 
   .c2c-preset-pairs::-webkit-scrollbar {
@@ -2488,10 +2528,14 @@ select.select-compact {
   }
 
   .preset-pair-btn {
-    flex-shrink: 0;
-    padding: 5px 10px;
-    min-height: 32px;
-    font-size: 0.72rem;
+    flex: 1 1 calc(50% - 6px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    min-height: 34px;
+    font-size: 0.74rem;
+    white-space: nowrap;
   }
 
   .c2c-grid {
@@ -2690,5 +2734,19 @@ select.select-compact {
 
   .history-actions {
     grid-template-columns: 1fr;
+  }
+
+  .tool-nav-btn {
+    padding: 5px 1px;
+    min-height: 46px;
+  }
+
+  .nav-label-mobile {
+    font-size: 0.67rem;
+  }
+
+  .tool-nav-btn svg {
+    width: 15px;
+    height: 15px;
   }
 }

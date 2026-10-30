@@ -1369,10 +1369,14 @@ document.addEventListener('DOMContentLoaded', () => {
     [navCalcBtn, navConvBtn, navC2cBtn].forEach((btn) => {
       if (btn) btn.classList.toggle('active', btn === activeBtn);
     });
-    // On mobile devices, ensure active tab is horizontally visible within the scrollable tool-nav
-    if (activeBtn && window.innerWidth <= 768) {
-      activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-    }
+  }
+
+  function scrollToSection(sectionId) {
+    const el = document.getElementById(sectionId);
+    if (!el) return;
+    const navHeight = 68;
+    const y = el.getBoundingClientRect().top + window.pageYOffset - navHeight;
+    window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
   }
 
   let isManualNavClick = false;
@@ -1390,7 +1394,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       markManualNav();
       setActiveNav(navCalcBtn);
-      document.getElementById('calculatorSection')?.scrollIntoView({ behavior: 'smooth' });
+      scrollToSection('calculatorSection');
     });
   }
 
@@ -1399,7 +1403,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       markManualNav();
       setActiveNav(navConvBtn);
-      document.getElementById('converterSection')?.scrollIntoView({ behavior: 'smooth' });
+      scrollToSection('converterSection');
     });
   }
 
@@ -1408,7 +1412,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       markManualNav();
       setActiveNav(navC2cBtn);
-      document.getElementById('c2cSection')?.scrollIntoView({ behavior: 'smooth' });
+      scrollToSection('c2cSection');
     });
   }
 
