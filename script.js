@@ -701,6 +701,386 @@ document.addEventListener('DOMContentLoaded', () => {
     renderHistory(false);
   });
 
+  // ==========================================
+  // CRYPTO-TO-MONEY CONVERTER MODULE
+  // ==========================================
+  const converterCoinSelect = document.getElementById('converterCoinSelect');
+  const converterFiatSelect = document.getElementById('converterFiatSelect');
+  const converterCryptoAmount = document.getElementById('converterCryptoAmount');
+  const converterFiatAmount = document.getElementById('converterFiatAmount');
+  const converterCryptoUnit = document.getElementById('converterCryptoUnit');
+  const converterFiatSymbol = document.getElementById('converterFiatSymbol');
+  const converterFiatCode = document.getElementById('converterFiatCode');
+  const rateCoinCode = document.getElementById('rateCoinCode');
+  const rateUnitSym = document.getElementById('rateUnitSym');
+  const converterCustomRate = document.getElementById('converterCustomRate');
+  const convHeadlineFrom = document.getElementById('convHeadlineFrom');
+  const convHeadlineTo = document.getElementById('convHeadlineTo');
+  const rateStatusBadge = document.getElementById('rateStatusBadge');
+  const refreshRateBtn = document.getElementById('refreshRateBtn');
+  const swapConverterBtn = document.getElementById('swapConverterBtn');
+  const applyToCalcBtn = document.getElementById('applyToCalcBtn');
+  const cryptoPresetChips = document.getElementById('cryptoPresetChips');
+  const fiatPresetChips = document.getElementById('fiatPresetChips');
+  const navCalcBtn = document.getElementById('navCalcBtn');
+  const navConvBtn = document.getElementById('navConvBtn');
+
+  // Benchmark exchange rates
+  const cryptoBenchmarkRates = {
+    bitcoin: {
+      symbol: 'BTC',
+      name: 'Bitcoin',
+      inr: 7600000,
+      usd: 90000,
+      gbp: 70000,
+      eur: 83000,
+      aed: 330000,
+      aud: 138000,
+      cad: 126000,
+      sgd: 120000
+    },
+    ethereum: {
+      symbol: 'ETH',
+      name: 'Ethereum',
+      inr: 224000,
+      usd: 2650,
+      gbp: 2080,
+      eur: 2450,
+      aed: 9730,
+      aud: 4080,
+      cad: 3710,
+      sgd: 3550
+    },
+    solana: {
+      symbol: 'SOL',
+      name: 'Solana',
+      inr: 14800,
+      usd: 175,
+      gbp: 138,
+      eur: 162,
+      aed: 642,
+      aud: 270,
+      cad: 245,
+      sgd: 235
+    },
+    tether: {
+      symbol: 'USDT',
+      name: 'Tether',
+      inr: 84.50,
+      usd: 1.00,
+      gbp: 0.78,
+      eur: 0.92,
+      aed: 3.67,
+      aud: 1.54,
+      cad: 1.40,
+      sgd: 1.34
+    },
+    binancecoin: {
+      symbol: 'BNB',
+      name: 'Binance Coin',
+      inr: 50700,
+      usd: 600,
+      gbp: 470,
+      eur: 555,
+      aed: 2200,
+      aud: 924,
+      cad: 840,
+      sgd: 804
+    },
+    ripple: {
+      symbol: 'XRP',
+      name: 'XRP',
+      inr: 46.50,
+      usd: 0.55,
+      gbp: 0.43,
+      eur: 0.51,
+      aed: 2.02,
+      aud: 0.85,
+      cad: 0.77,
+      sgd: 0.74
+    },
+    cardano: {
+      symbol: 'ADA',
+      name: 'Cardano',
+      inr: 29.60,
+      usd: 0.35,
+      gbp: 0.27,
+      eur: 0.32,
+      aed: 1.28,
+      aud: 0.54,
+      cad: 0.49,
+      sgd: 0.47
+    },
+    dogecoin: {
+      symbol: 'DOGE',
+      name: 'Dogecoin',
+      inr: 12.70,
+      usd: 0.15,
+      gbp: 0.12,
+      eur: 0.14,
+      aed: 0.55,
+      aud: 0.23,
+      cad: 0.21,
+      sgd: 0.20
+    }
+  };
+
+  const fiatConfig = {
+    inr: { symbol: '₹', code: 'INR', locale: 'en-IN', presets: [5000, 25000, 50000, 100000, 500000] },
+    usd: { symbol: '$', code: 'USD', locale: 'en-US', presets: [100, 500, 1000, 5000, 10000] },
+    gbp: { symbol: '£', code: 'GBP', locale: 'en-GB', presets: [100, 500, 1000, 2500, 5000] },
+    eur: { symbol: '€', code: 'EUR', locale: 'de-DE', presets: [100, 500, 1000, 5000, 10000] },
+    aed: { symbol: 'AED', code: 'AED', locale: 'en-AE', presets: [500, 2500, 5000, 10000, 50000] },
+    aud: { symbol: 'A$', code: 'AUD', locale: 'en-AU', presets: [100, 500, 1000, 5000, 10000] },
+    cad: { symbol: 'C$', code: 'CAD', locale: 'en-CA', presets: [100, 500, 1000, 5000, 10000] },
+    sgd: { symbol: 'S$', code: 'SGD', locale: 'en-SG', presets: [100, 500, 1000, 5000, 10000] }
+  };
+
+  let currentActiveInput = 'crypto'; // 'crypto' or 'fiat'
+
+  function getActiveCoinRate(coinId, fiatCode) {
+    const coin = cryptoBenchmarkRates[coinId];
+    if (coin && coin[fiatCode] !== undefined) {
+      return coin[fiatCode];
+    }
+    return 1;
+  }
+
+  function updateFiatPresetChips() {
+    if (!fiatPresetChips) return;
+    const fiatKey = converterFiatSelect.value;
+    const conf = fiatConfig[fiatKey] || fiatConfig.inr;
+    fiatPresetChips.innerHTML = conf.presets
+      .map((val) => `<button type="button" class="preset-chip" data-fiat-val="${val}">${conf.symbol}${val.toLocaleString(conf.locale)}</button>`)
+      .join('');
+
+    fiatPresetChips.querySelectorAll('.preset-chip').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        fiatPresetChips.querySelectorAll('.preset-chip').forEach((b) => b.classList.remove('active'));
+        if (cryptoPresetChips) cryptoPresetChips.querySelectorAll('.preset-chip').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        converterFiatAmount.value = btn.dataset.fiatVal;
+        currentActiveInput = 'fiat';
+        recalcConversion('fiat');
+      });
+    });
+  }
+
+  function updateConverterLabels() {
+    const coinOption = converterCoinSelect.selectedOptions[0];
+    const coinSymbol = coinOption ? coinOption.dataset.symbol : 'BTC';
+    const fiatKey = converterFiatSelect.value;
+    const fiat = fiatConfig[fiatKey] || fiatConfig.inr;
+
+    if (converterCryptoUnit) converterCryptoUnit.textContent = coinSymbol;
+    if (rateCoinCode) rateCoinCode.textContent = coinSymbol;
+    if (converterFiatSymbol) converterFiatSymbol.textContent = fiat.symbol;
+    if (converterFiatCode) converterFiatCode.textContent = fiat.code;
+    if (rateUnitSym) rateUnitSym.textContent = fiat.symbol;
+
+    updateFiatPresetChips();
+  }
+
+  function syncUnitRateFromMarket() {
+    const coinId = converterCoinSelect.value;
+    const fiatCode = converterFiatSelect.value;
+    const unitPrice = getActiveCoinRate(coinId, fiatCode);
+    converterCustomRate.value = unitPrice;
+    return unitPrice;
+  }
+
+  function recalcConversion(trigger = currentActiveInput) {
+    const unitRate = parseFloat(converterCustomRate.value) || 0;
+    const coinOption = converterCoinSelect.selectedOptions[0];
+    const coinSymbol = coinOption ? coinOption.dataset.symbol : 'BTC';
+    const fiatKey = converterFiatSelect.value;
+    const fiat = fiatConfig[fiatKey] || fiatConfig.inr;
+
+    if (unitRate <= 0) return;
+
+    if (trigger === 'crypto') {
+      const cryptoQty = parseFloat(converterCryptoAmount.value) || 0;
+      const cashVal = cryptoQty * unitRate;
+      converterFiatAmount.value = cashVal > 0 ? (cashVal % 1 === 0 ? cashVal : parseFloat(cashVal.toFixed(2))) : '';
+
+      convHeadlineFrom.textContent = `${cryptoQty} ${coinSymbol}`;
+      convHeadlineTo.textContent = `${fiat.symbol}${cashVal.toLocaleString(fiat.locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${fiat.code}`;
+    } else {
+      const cashVal = parseFloat(converterFiatAmount.value) || 0;
+      const cryptoQty = cashVal / unitRate;
+      // Precision formatting for crypto (up to 8 decimal places, trimming trailing zeros)
+      converterCryptoAmount.value = cryptoQty > 0 ? parseFloat(cryptoQty.toFixed(8)) : '';
+
+      convHeadlineFrom.textContent = `${fiat.symbol}${cashVal.toLocaleString(fiat.locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${fiat.code}`;
+      convHeadlineTo.textContent = `~ ${parseFloat(cryptoQty.toFixed(8))} ${coinSymbol}`;
+    }
+  }
+
+  // Event Listeners for Converter
+  if (converterCryptoAmount) {
+    converterCryptoAmount.addEventListener('input', () => {
+      currentActiveInput = 'crypto';
+      recalcConversion('crypto');
+      if (cryptoPresetChips) {
+        cryptoPresetChips.querySelectorAll('.preset-chip').forEach((b) => {
+          b.classList.toggle('active', parseFloat(b.dataset.value) === parseFloat(converterCryptoAmount.value));
+        });
+      }
+    });
+  }
+
+  if (converterFiatAmount) {
+    converterFiatAmount.addEventListener('input', () => {
+      currentActiveInput = 'fiat';
+      recalcConversion('fiat');
+      if (fiatPresetChips) {
+        fiatPresetChips.querySelectorAll('.preset-chip').forEach((b) => {
+          b.classList.toggle('active', parseFloat(b.dataset.fiatVal) === parseFloat(converterFiatAmount.value));
+        });
+      }
+    });
+  }
+
+  if (converterCoinSelect) {
+    converterCoinSelect.addEventListener('change', () => {
+      updateConverterLabels();
+      syncUnitRateFromMarket();
+      recalcConversion('crypto');
+    });
+  }
+
+  if (converterFiatSelect) {
+    converterFiatSelect.addEventListener('change', () => {
+      updateConverterLabels();
+      syncUnitRateFromMarket();
+      recalcConversion('crypto');
+    });
+  }
+
+  if (converterCustomRate) {
+    converterCustomRate.addEventListener('input', () => {
+      recalcConversion(currentActiveInput);
+    });
+  }
+
+  if (swapConverterBtn) {
+    swapConverterBtn.addEventListener('click', () => {
+      if (currentActiveInput === 'crypto') {
+        currentActiveInput = 'fiat';
+        converterFiatAmount.focus();
+        converterFiatAmount.select();
+      } else {
+        currentActiveInput = 'crypto';
+        converterCryptoAmount.focus();
+        converterCryptoAmount.select();
+      }
+      recalcConversion(currentActiveInput);
+    });
+  }
+
+  // Crypto preset chips
+  if (cryptoPresetChips) {
+    cryptoPresetChips.querySelectorAll('.preset-chip').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        cryptoPresetChips.querySelectorAll('.preset-chip').forEach((b) => b.classList.remove('active'));
+        if (fiatPresetChips) fiatPresetChips.querySelectorAll('.preset-chip').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        converterCryptoAmount.value = btn.dataset.value;
+        currentActiveInput = 'crypto';
+        recalcConversion('crypto');
+      });
+    });
+  }
+
+  // Live Rates Fetcher (CoinGecko API with fallback)
+  async function fetchLiveCoinGeckoRates() {
+    if (!rateStatusBadge) return;
+    rateStatusBadge.textContent = '⟳ Fetching Live Rates...';
+    try {
+      const response = await fetch(
+        'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,tether,binancecoin,ripple,cardano,dogecoin&vs_currencies=inr,usd,eur,gbp,aed,aud,cad,sgd'
+      );
+      if (!response.ok) throw new Error('API response not ok');
+      const data = await response.json();
+
+      Object.keys(data).forEach((coinId) => {
+        if (cryptoBenchmarkRates[coinId]) {
+          Object.assign(cryptoBenchmarkRates[coinId], data[coinId]);
+        }
+      });
+
+      rateStatusBadge.textContent = '● Live CoinGecko Rates';
+      rateStatusBadge.style.color = '#15803d';
+      rateStatusBadge.style.backgroundColor = '#dcfce7';
+      rateStatusBadge.style.borderColor = '#86efac';
+
+      syncUnitRateFromMarket();
+      recalcConversion(currentActiveInput);
+    } catch (err) {
+      rateStatusBadge.textContent = '● Benchmark Market Rates';
+      rateStatusBadge.style.color = '#0369a1';
+      rateStatusBadge.style.backgroundColor = '#f0f9ff';
+      rateStatusBadge.style.borderColor = '#bae6fd';
+    }
+  }
+
+  if (refreshRateBtn) {
+    refreshRateBtn.addEventListener('click', () => {
+      fetchLiveCoinGeckoRates();
+    });
+  }
+
+  // Bridge: Apply to P&L Calculator
+  if (applyToCalcBtn) {
+    applyToCalcBtn.addEventListener('click', () => {
+      const cryptoQty = parseFloat(converterCryptoAmount.value) || 1;
+      const unitRate = parseFloat(converterCustomRate.value) || 0;
+
+      if (coinQtyInput) coinQtyInput.value = cryptoQty;
+      if (buyPriceInput) buyPriceInput.value = unitRate;
+
+      // Scroll smoothly to calculator section
+      const calcSection = document.getElementById('calculatorSection');
+      if (calcSection) {
+        calcSection.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      flashFieldUpdate(coinQtyInput);
+      flashFieldUpdate(buyPriceInput);
+
+      if (navCalcBtn && navConvBtn) {
+        navCalcBtn.classList.add('active');
+        navConvBtn.classList.remove('active');
+      }
+
+      calculatePnL(false);
+    });
+  }
+
+  // Tool Navigation Scroll Sync
+  if (navCalcBtn && navConvBtn) {
+    navCalcBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      navCalcBtn.classList.add('active');
+      navConvBtn.classList.remove('active');
+      document.getElementById('calculatorSection')?.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    navConvBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      navConvBtn.classList.add('active');
+      navCalcBtn.classList.remove('active');
+      document.getElementById('converterSection')?.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  // Initialize Converter on load
+  updateConverterLabels();
+  syncUnitRateFromMarket();
+  recalcConversion('crypto');
+  // Attempt background live rate fetch
+  fetchLiveCoinGeckoRates();
+
   // Ensure clicking the wrapper focuses the input
   document.querySelectorAll('.input-addon-wrap').forEach((wrap) => {
     wrap.addEventListener('click', () => {

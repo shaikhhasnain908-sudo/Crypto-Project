@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crypto Profit After Tax Calculator - Country & Tax Year Selector</title>
+  <title>Crypto Profit After Tax Calculator &amp; Crypto-to-Money Converter</title>
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,7 +27,29 @@
       </div>
     </header>
 
-    <div class="main-grid">
+    <!-- Tool Navigation Bar -->
+    <nav class="tool-nav" aria-label="Tool Navigation">
+      <a href="#calculatorSection" class="tool-nav-btn active" id="navCalcBtn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+          <line x1="8" y1="6" x2="16" y2="6"></line>
+          <line x1="16" y1="14" x2="16" y2="18"></line>
+          <path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01"></path>
+        </svg>
+        <span>P&amp;L &amp; Tax Calculator</span>
+      </a>
+      <a href="#converterSection" class="tool-nav-btn" id="navConvBtn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="17 1 21 5 17 9"></polyline>
+          <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+          <polyline points="7 23 3 19 7 15"></polyline>
+          <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+        </svg>
+        <span>Crypto-to-Money Converter</span>
+      </a>
+    </nav>
+
+    <div class="main-grid" id="calculatorSection">
       <!-- Calculator Form Section -->
       <section class="card input-card">
         <div class="card-header">
@@ -273,6 +295,135 @@
         </div>
       </section>
     </div>
+
+    <!-- Crypto-to-Money Converter Section -->
+    <section class="card converter-card" id="converterSection">
+      <div class="card-header">
+        <div class="converter-header-title">
+          <div class="converter-icon-badge">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="17 1 21 5 17 9"></polyline>
+              <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+              <polyline points="7 23 3 19 7 15"></polyline>
+              <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+            </svg>
+          </div>
+          <div>
+            <h2>Crypto-to-Money Converter</h2>
+            <p class="section-subtext">Convert Bitcoin &amp; altcoins into fiat cash (Rupees, Dollars, Pounds, Euros), or enter cash to see how much crypto it buys.</p>
+          </div>
+        </div>
+        <div class="rate-status-wrap">
+          <span class="rate-status-badge" id="rateStatusBadge">● Live Market Rates</span>
+          <button type="button" id="refreshRateBtn" class="btn-text rate-refresh-btn" title="Refresh exchange rates">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/>
+            </svg>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <div class="converter-body">
+        <div class="converter-inputs-grid">
+          <!-- Crypto Input Block -->
+          <div class="converter-box">
+            <div class="converter-box-header">
+              <label for="converterCryptoAmount">Cryptocurrency Amount</label>
+              <div class="select-inline-wrap">
+                <select id="converterCoinSelect" class="form-control select-compact">
+                  <option value="bitcoin" data-symbol="BTC" selected>Bitcoin (BTC)</option>
+                  <option value="ethereum" data-symbol="ETH">Ethereum (ETH)</option>
+                  <option value="solana" data-symbol="SOL">Solana (SOL)</option>
+                  <option value="tether" data-symbol="USDT">Tether (USDT)</option>
+                  <option value="binancecoin" data-symbol="BNB">Binance Coin (BNB)</option>
+                  <option value="ripple" data-symbol="XRP">XRP (XRP)</option>
+                  <option value="cardano" data-symbol="ADA">Cardano (ADA)</option>
+                  <option value="dogecoin" data-symbol="DOGE">Dogecoin (DOGE)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="converter-input-wrap">
+              <input type="number" id="converterCryptoAmount" class="converter-num-input" placeholder="1.0" step="any" min="0" value="1">
+              <span class="converter-unit" id="converterCryptoUnit">BTC</span>
+            </div>
+
+            <div class="quick-preset-chips" id="cryptoPresetChips">
+              <button type="button" class="preset-chip" data-value="0.01">0.01</button>
+              <button type="button" class="preset-chip" data-value="0.05">0.05</button>
+              <button type="button" class="preset-chip" data-value="0.1">0.1</button>
+              <button type="button" class="preset-chip" data-value="0.5">0.5</button>
+              <button type="button" class="preset-chip active" data-value="1">1.0</button>
+              <button type="button" class="preset-chip" data-value="5">5.0</button>
+            </div>
+          </div>
+
+          <!-- Swap Direction Button -->
+          <div class="converter-swap-wrap">
+            <button type="button" id="swapConverterBtn" class="swap-direction-btn" title="Swap input focus">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 16V4M7 4L3 8M7 4L11 8M17 8v12M17 20l4-4M17 20l-4-4"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Fiat Cash Input Block -->
+          <div class="converter-box">
+            <div class="converter-box-header">
+              <label for="converterFiatAmount">Cash Value / Fiat Money</label>
+              <div class="select-inline-wrap">
+                <select id="converterFiatSelect" class="form-control select-compact">
+                  <option value="inr" data-symbol="₹" selected>🇮🇳 INR (₹) Rupee</option>
+                  <option value="usd" data-symbol="$">🇺🇸 USD ($) Dollar</option>
+                  <option value="gbp" data-symbol="£">🇬🇧 GBP (£) Pound</option>
+                  <option value="eur" data-symbol="€">🇪🇺 EUR (€) Euro</option>
+                  <option value="aed" data-symbol="AED">🇦🇪 AED Dirham</option>
+                  <option value="aud" data-symbol="A$">🇦🇺 AUD (A$) Dollar</option>
+                  <option value="cad" data-symbol="C$">🇨🇦 CAD (C$) Dollar</option>
+                  <option value="sgd" data-symbol="S$">🇸🇬 SGD (S$) Dollar</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="converter-input-wrap">
+              <span class="converter-fiat-symbol" id="converterFiatSymbol">₹</span>
+              <input type="number" id="converterFiatAmount" class="converter-num-input with-symbol" placeholder="0.00" step="any" min="0">
+              <span class="converter-unit" id="converterFiatCode">INR</span>
+            </div>
+
+            <div class="quick-preset-chips" id="fiatPresetChips">
+              <!-- Dynamically populated chips based on selected currency -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Conversion Live Result Banner & Rate Bar -->
+        <div class="converter-summary-banner">
+          <div class="conversion-headline">
+            <span class="conv-from" id="convHeadlineFrom">1 BTC</span>
+            <span class="conv-equals">=</span>
+            <span class="conv-to" id="convHeadlineTo">₹76,00,000.00 INR</span>
+          </div>
+
+          <div class="conversion-rate-editor">
+            <div class="rate-editor-left">
+              <span class="rate-unit-label">Unit Price: 1 <span id="rateCoinCode">BTC</span> =</span>
+              <div class="inline-rate-input-wrap">
+                <span class="rate-sym" id="rateUnitSym">₹</span>
+                <input type="number" id="converterCustomRate" class="custom-rate-input" step="any" min="0">
+              </div>
+            </div>
+            <button type="button" id="applyToCalcBtn" class="btn-action-pill" title="Send these values into the Profit Calculator">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 19V5M5 12l7-7 7 7"/>
+              </svg>
+              Apply to P&amp;L Calculator
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- Trade History / Audit Log -->
     <section class="card history-card">
