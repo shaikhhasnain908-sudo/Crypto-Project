@@ -252,6 +252,19 @@ body {
   transform: translateY(-1px);
 }
 
+select.form-control,
+select.select-compact {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+  padding-right: 38px;
+  cursor: pointer;
+}
+
 .fee-auto-updated {
   border-color: var(--primary) !important;
   background-color: #eff6ff !important;
@@ -1989,10 +2002,41 @@ body {
    ========================================================================== */
 
 @media (max-width: 768px) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
   body {
     padding: 10px 8px;
     -webkit-text-size-adjust: 100%;
     overflow-x: hidden;
+  }
+
+  /* Ergonomic Touch Press States */
+  button,
+  .btn-primary,
+  .tool-nav-btn,
+  .region-tab,
+  .preset-chip,
+  .preset-pair-btn,
+  .swap-direction-btn,
+  .coin-price-pill,
+  .btn-action-pill,
+  .btn-action-sm,
+  .btn-text {
+    touch-action: manipulation;
+  }
+
+  .btn-primary:active,
+  .tool-nav-btn:active,
+  .region-tab:active,
+  .preset-chip:active,
+  .preset-pair-btn:active,
+  .swap-direction-btn:active,
+  .coin-price-pill:active,
+  .btn-action-pill:active,
+  .btn-action-sm:active {
+    transform: scale(0.96);
   }
 
   .app-container {
@@ -2104,6 +2148,7 @@ body {
     padding: 4px;
     gap: 6px;
     border-radius: 10px;
+    border: 1px solid rgba(226, 232, 240, 0.9);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 
@@ -2113,10 +2158,13 @@ body {
 
   .tool-nav-btn {
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 8px 12px;
     font-size: 0.78rem;
     white-space: nowrap;
-    min-height: 38px;
+    min-height: 42px;
     border-radius: 8px;
   }
 

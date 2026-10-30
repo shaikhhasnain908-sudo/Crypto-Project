@@ -116,7 +116,7 @@
           <div class="form-row">
             <div class="form-group">
               <label for="coinQuantity">Coin Quantity</label>
-              <input type="number" id="coinQuantity" class="form-control" placeholder="e.g. 0.5 BTC" step="any" min="0"
+              <input type="number" id="coinQuantity" class="form-control" placeholder="e.g. 0.5 BTC" step="any" min="0" inputmode="decimal"
                 required>
             </div>
 
@@ -135,7 +135,7 @@
               <label for="buyPrice">Buy Price (Per Coin)</label>
               <div class="input-addon-wrap">
                 <span class="addon currency-symbol">₹</span>
-                <input type="number" id="buyPrice" class="form-control with-addon" placeholder="0.00" step="any" min="0"
+                <input type="number" id="buyPrice" class="form-control with-addon" placeholder="0.00" step="any" min="0" inputmode="decimal"
                   required>
               </div>
             </div>
@@ -143,8 +143,8 @@
               <label for="sellPrice">Sell Price (Per Coin)</label>
               <div class="input-addon-wrap">
                 <span class="addon currency-symbol">₹</span>
-                <input type="number" id="sellPrice" class="form-control with-addon" placeholder="0.00" step="any"
-                  min="0" required>
+                <input type="number" id="sellPrice" class="form-control with-addon" placeholder="0.00" step="any" min="0" inputmode="decimal"
+                  required>
               </div>
             </div>
           </div>
@@ -157,7 +157,7 @@
                 <label for="buyFee">Buy Fee (%)</label>
                 <span class="auto-badge">Auto-set</span>
               </div>
-              <input type="number" id="buyFee" class="form-control" placeholder="0.2" step="any" min="0" value="0.2">
+              <input type="number" id="buyFee" class="form-control" placeholder="0.2" step="any" min="0" value="0.2" inputmode="decimal">
               <span class="field-hint" id="buyFeeHint">CoinDCX / WazirX spot fee: 0.20%</span>
             </div>
             <div class="form-group">
@@ -165,7 +165,7 @@
                 <label for="sellFee">Sell Fee (%)</label>
                 <span class="auto-badge">Auto-set</span>
               </div>
-              <input type="number" id="sellFee" class="form-control" placeholder="0.2" step="any" min="0" value="0.2">
+              <input type="number" id="sellFee" class="form-control" placeholder="0.2" step="any" min="0" value="0.2" inputmode="decimal">
               <span class="field-hint" id="sellFeeHint">CoinDCX / WazirX spot fee: 0.20%</span>
             </div>
           </div>
@@ -178,7 +178,7 @@
                 <label for="sellTds" id="sellTdsLabel">Sell TDS (Sec 194S) (%)</label>
                 <span class="auto-badge advance-pill" id="sellTdsBadge">Advance Tax</span>
               </div>
-              <input type="number" id="sellTds" class="form-control" placeholder="1.0" step="any" min="0" value="1.0">
+              <input type="number" id="sellTds" class="form-control" placeholder="1.0" step="any" min="0" value="1.0" inputmode="decimal">
               <span class="field-hint" id="sellTdsHint">Section 194S: 1.0% TDS deducted at source by Indian exchanges on every sell order.</span>
             </div>
 
@@ -190,7 +190,7 @@
                   <span class="toggle-text">Apply</span>
                 </label>
               </div>
-              <input type="number" id="profitTax" class="form-control" placeholder="30.0" step="any" min="0" value="30.0">
+              <input type="number" id="profitTax" class="form-control" placeholder="30.0" step="any" min="0" value="30.0" inputmode="decimal">
               <span class="field-hint" id="profitTaxHint">Section 115BBH: 30% flat tax on net crypto profits.</span>
             </div>
           </div>
@@ -393,7 +393,7 @@
             </div>
 
             <div class="converter-input-wrap">
-              <input type="number" id="converterCryptoAmount" class="converter-num-input" placeholder="1.0" step="any" min="0" value="1">
+              <input type="number" id="converterCryptoAmount" class="converter-num-input" placeholder="1.0" step="any" min="0" value="1" inputmode="decimal">
               <span class="converter-unit" id="converterCryptoUnit">BTC</span>
             </div>
 
@@ -436,7 +436,7 @@
 
             <div class="converter-input-wrap">
               <span class="converter-fiat-symbol" id="converterFiatSymbol">₹</span>
-              <input type="number" id="converterFiatAmount" class="converter-num-input with-symbol" placeholder="0.00" step="any" min="0">
+              <input type="number" id="converterFiatAmount" class="converter-num-input with-symbol" placeholder="0.00" step="any" min="0" inputmode="decimal">
               <span class="converter-unit" id="converterFiatCode">INR</span>
             </div>
 
@@ -459,7 +459,7 @@
               <span class="rate-unit-label">Unit Price: 1 <span id="rateCoinCode">BTC</span> =</span>
               <div class="inline-rate-input-wrap">
                 <span class="rate-sym" id="rateUnitSym">₹</span>
-                <input type="number" id="converterCustomRate" class="custom-rate-input" step="any" min="0">
+                <input type="number" id="converterCustomRate" class="custom-rate-input" step="any" min="0" inputmode="decimal">
               </div>
             </div>
             <button type="button" id="applyToCalcBtn" class="btn-action-pill" title="Send these values into the Profit Calculator">
@@ -532,7 +532,7 @@
             </div>
 
             <div class="converter-input-wrap">
-              <input type="number" id="c2cFromAmount" class="converter-num-input" placeholder="1.0" step="any" min="0" value="1">
+              <input type="number" id="c2cFromAmount" class="converter-num-input" placeholder="1.0" step="any" min="0" value="1" inputmode="decimal">
               <span class="converter-unit" id="c2cFromUnit">BTC</span>
             </div>
 
@@ -558,7 +558,7 @@
             <div class="c2c-fee-setting">
               <label for="c2cFeePct">Swap Fee:</label>
               <div class="c2c-fee-input-wrap">
-                <input type="number" id="c2cFeePct" class="fee-number-input" value="0.2" step="0.05" min="0" max="10">
+                <input type="number" id="c2cFeePct" class="fee-number-input" value="0.2" step="0.05" min="0" max="10" inputmode="decimal">
                 <span>%</span>
               </div>
             </div>
@@ -583,7 +583,7 @@
             </div>
 
             <div class="converter-input-wrap receive-wrap">
-              <input type="number" id="c2cToAmount" class="converter-num-input" placeholder="0.00" step="any" min="0">
+              <input type="number" id="c2cToAmount" class="converter-num-input" placeholder="0.00" step="any" min="0" inputmode="decimal">
               <span class="converter-unit" id="c2cToUnit">ETH</span>
             </div>
 

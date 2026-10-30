@@ -500,6 +500,15 @@ document.addEventListener('DOMContentLoaded', () => {
     calculatePnL(false);
   });
 
+  // Real-time calculation on mobile & desktop inputs
+  [coinQtyInput, buyPriceInput, sellPriceInput, buyFeeInput, sellFeeInput, sellTdsInput, profitTaxInput].forEach((inputEl) => {
+    if (inputEl) {
+      inputEl.addEventListener('input', () => {
+        calculatePnL(false);
+      });
+    }
+  });
+
   // Main calculation logic
   function calculatePnL(recordHistory = true) {
     const qty = parseFloat(coinQtyInput.value);
@@ -754,6 +763,15 @@ document.addEventListener('DOMContentLoaded', () => {
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     calculatePnL(true);
+
+    // On mobile devices, smoothly scroll down to the result summary so results are immediately visible
+    if (window.innerWidth <= 860) {
+      const resultCard = document.querySelector('.result-card');
+      if (resultCard) {
+        resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+    showToast('Calculation updated & saved to history');
   });
 
   // Reset
@@ -1344,18 +1362,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Tool Navigation Scroll Sync
+  // Tool Navigation Scroll Sync & Scroll-Spy
   const navC2cBtn = document.getElementById('navC2cBtn');
 
   function setActiveNav(activeBtn) {
     [navCalcBtn, navConvBtn, navC2cBtn].forEach((btn) => {
       if (btn) btn.classList.toggle('active', btn === activeBtn);
     });
+    // On mobile devices, ensure active tab is horizontally visible within the scrollable tool-nav
+    if (activeBtn && window.innerWidth <= 768) {
+      activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+  }
+
+  let isManualNavClick = false;
+  let manualNavTimer = null;
+  function markManualNav() {
+    isManualNavClick = true;
+    if (manualNavTimer) clearTimeout(manualNavTimer);
+    manualNavTimer = setTimeout(() => {
+      isManualNavClick = false;
+    }, 900);
   }
 
   if (navCalcBtn) {
     navCalcBtn.addEventListener('click', (e) => {
       e.preventDefault();
+      markManualNav();
       setActiveNav(navCalcBtn);
       document.getElementById('calculatorSection')?.scrollIntoView({ behavior: 'smooth' });
     });
@@ -1364,6 +1397,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (navConvBtn) {
     navConvBtn.addEventListener('click', (e) => {
       e.preventDefault();
+      markManualNav();
       setActiveNav(navConvBtn);
       document.getElementById('converterSection')?.scrollIntoView({ behavior: 'smooth' });
     });
@@ -1372,8 +1406,38 @@ document.addEventListener('DOMContentLoaded', () => {
   if (navC2cBtn) {
     navC2cBtn.addEventListener('click', (e) => {
       e.preventDefault();
+      markManualNav();
       setActiveNav(navC2cBtn);
       document.getElementById('c2cSection')?.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  // Scroll-Spy: Automatically highlight active tool tab as the mobile user scrolls
+  if ('IntersectionObserver' in window) {
+    const sectionObserverTargets = [
+      { id: 'calculatorSection', btn: navCalcBtn },
+      { id: 'converterSection', btn: navConvBtn },
+      { id: 'c2cSection', btn: navC2cBtn }
+    ];
+
+    const scrollSpyObserver = new IntersectionObserver((entries) => {
+      if (isManualNavClick) return;
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const match = sectionObserverTargets.find(s => s.id === entry.target.id);
+          if (match && match.btn) {
+            setActiveNav(match.btn);
+          }
+        }
+      });
+    }, {
+      rootMargin: '-20% 0px -50% 0px',
+      threshold: [0.08, 0.2]
+    });
+
+    sectionObserverTargets.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (el) scrollSpyObserver.observe(el);
     });
   }
 
