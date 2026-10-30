@@ -522,3 +522,225 @@ body {
     transform: scale(1);
   }
 }
+
+/* 3 Summary Cards: Profit Before Tax, Estimated Tax, Profit After Tax */
+.tax-summary-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 640px) {
+  .tax-summary-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tax-summary-box {
+  background: var(--neutral-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tax-summary-box:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.tax-summary-box.primary-box {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.tax-summary-box.tax-liability-box {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.tax-box-title {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tax-box-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.25;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  margin: 2px 0;
+  transition: color 0.3s ease;
+}
+
+.tax-box-value.profit {
+  color: var(--success);
+}
+
+.tax-box-value.loss {
+  color: var(--danger);
+}
+
+.tax-box-value.neutral {
+  color: var(--text-main);
+}
+
+.tax-box-value.tax-color {
+  color: #d97706;
+}
+
+.tax-box-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* TDS Settlement Card - Separates TDS from extra tax */
+.tds-settlement-card {
+  background: #fafaf9;
+  border: 1px solid #e7e5e4;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+}
+
+.settlement-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e7e5e4;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.settlement-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.settlement-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.settlement-pill {
+  font-size: 0.7rem;
+  font-weight: 600;
+  background-color: #eff6ff;
+  color: var(--primary);
+  border: 1px solid #bfdbfe;
+  padding: 2px 8px;
+  border-radius: 9999px;
+}
+
+.settlement-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.settlement-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 480px) {
+  .settlement-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.settlement-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  padding: 9px 12px;
+  border-radius: 8px;
+}
+
+.settlement-item.highlight {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.advance-tag {
+  font-size: 0.65rem;
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.advance-pill {
+  color: #0369a1;
+  background-color: #f0f9ff;
+  border-color: #bae6fd;
+}
+
+.text-deducted {
+  color: #0284c7;
+  font-weight: 600;
+}
+
+.text-cash {
+  color: #0d9488;
+  font-weight: 600;
+}
+
+.tds-info-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.tds-info-alert svg {
+  flex-shrink: 0;
+  color: #16a34a;
+  margin-top: 2px;
+}
+
+.tds-alert-content {
+  font-size: 0.74rem;
+  line-height: 1.4;
+  color: #166534;
+}
+
+.tds-alert-content strong {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.tds-alert-content p {
+  margin: 0;
+}

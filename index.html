@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crypto Profit & Loss Calculator - Genuine Country Fees & Taxes</title>
+  <title>Crypto Profit After Indian Tax Calculator - TDS & Capital Gains</title>
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,8 +22,8 @@
         </svg>
       </div>
       <div>
-        <h1>Crypto P&amp;L Calculator</h1>
-        <p>Accurate crypto returns with genuine exchange fees, country TDS, and capital gains taxes.</p>
+        <h1>Crypto Profit After Indian Tax Calculator</h1>
+        <p>Calculate profit before tax, estimated Indian tax, TDS advance tax credit, and final profit after tax.</p>
       </div>
     </header>
 
@@ -38,7 +38,7 @@
         <form id="pnlForm" autocomplete="off">
           <div class="form-row">
             <div class="form-group">
-              <label for="currencySelect">Country &amp; Currency</label>
+              <label for="currencySelect">Country &amp; Tax Regime</label>
               <select id="currencySelect" class="form-control">
                 <option value="INR" selected>🇮🇳 INR (₹) - India (1% TDS + 30% Tax)</option>
                 <option value="USD">🇺🇸 USD ($) - USA (0.1% Fee + 15% CGT)</option>
@@ -93,13 +93,13 @@
             </div>
           </div>
 
-          <!-- Genuine Country Tax Provisions -->
-          <div class="form-section-title">Genuine Country Taxes &amp; Deductions</div>
+          <!-- Country Tax Provisions -->
+          <div class="form-section-title">Tax &amp; TDS Deductions</div>
           <div class="form-row">
             <div class="form-group">
               <div class="label-with-badge">
-                <label for="sellTds" id="sellTdsLabel">Sell TDS / Withholding (%)</label>
-                <span class="auto-badge tax-badge">Tax</span>
+                <label for="sellTds" id="sellTdsLabel">Sell TDS (Sec 194S) (%)</label>
+                <span class="auto-badge advance-pill">Advance Tax</span>
               </div>
               <input type="number" id="sellTds" class="form-control" placeholder="1.0" step="any" min="0" value="1.0">
               <span class="field-hint" id="sellTdsHint">Section 194S: 1.0% TDS deducted at source by Indian exchanges on every sell order.</span>
@@ -107,7 +107,7 @@
 
             <div class="form-group">
               <div class="label-with-badge">
-                <label for="profitTax" id="profitTaxLabel">Profit / Capital Gains Tax (%)</label>
+                <label for="profitTax" id="profitTaxLabel">Flat VDA Profit Tax (%)</label>
                 <label class="toggle-switch-inline">
                   <input type="checkbox" id="includeProfitTax" checked>
                   <span class="toggle-text">Apply</span>
@@ -125,20 +125,80 @@
       <!-- Results Display Section -->
       <section class="card result-card">
         <div class="card-header">
-          <h2>Summary &amp; Performance</h2>
+          <h2>Summary &amp; Tax Audit</h2>
           <span class="status-badge neutral" id="statusBadge">Awaiting Input</span>
         </div>
 
-        <div class="hero-metric">
-          <span class="metric-label" id="heroMetricLabel">Net In-Hand Profit / Loss</span>
-          <div class="metric-value neutral" id="netProfitDisplay">₹0.00</div>
-          <div class="roi-badge neutral" id="roiDisplay">0.00% ROI</div>
-          <div class="hero-subtext" id="heroSubtext">After exchange fees, TDS, and capital gains tax</div>
+        <!-- 3 Key High-Level Highlight Cards: Profit Before Tax, Estimated Tax, Profit After Tax -->
+        <div class="tax-summary-cards">
+          <div class="tax-summary-box">
+            <span class="tax-box-title">Profit Before Tax</span>
+            <div class="tax-box-value neutral" id="pbtHighlightDisplay">₹0.00</div>
+            <span class="tax-box-sub">Net profit before government taxes</span>
+          </div>
+
+          <div class="tax-summary-box tax-liability-box">
+            <span class="tax-box-title" id="taxBoxLabel">Estimated Indian Tax (30%)</span>
+            <div class="tax-box-value tax-color" id="taxHighlightDisplay">₹0.00</div>
+            <span class="tax-box-sub" id="taxBoxSub">Sec 115BBH flat tax liability</span>
+          </div>
+
+          <div class="tax-summary-box primary-box">
+            <span class="tax-box-title">Profit After Tax</span>
+            <div class="tax-box-value neutral" id="patHighlightDisplay">₹0.00</div>
+            <span class="tax-box-sub" id="roiSubDisplay">0.00% Net ROI</span>
+          </div>
         </div>
 
+        <!-- TDS & Tax Settlement Section: Explicitly Separates TDS from Extra Tax -->
+        <div class="tds-settlement-card">
+          <div class="settlement-header">
+            <div class="settlement-title-wrap">
+              <span class="settlement-title">TDS Credit &amp; Tax Settlement</span>
+              <span class="settlement-pill" id="tdsPillBadge">1% TDS (Sec 194S)</span>
+            </div>
+            <span class="settlement-tag">Not an Extra Tax</span>
+          </div>
+
+          <div class="settlement-grid">
+            <div class="settlement-item">
+              <span class="item-label" id="settlementTaxLabel">Estimated Total Tax (30%)</span>
+              <span class="item-value tax-highlight" id="settlementTaxDisplay">₹0.00</span>
+            </div>
+            <div class="settlement-item">
+              <span class="item-label">
+                TDS Already Deducted
+                <span class="advance-tag">Advance Paid</span>
+              </span>
+              <span class="item-value text-deducted" id="settlementTdsDisplay">- ₹0.00</span>
+            </div>
+            <div class="settlement-item highlight">
+              <span class="item-label" id="settlementRemainingLabel">Net Tax Remaining to Pay at ITR</span>
+              <span class="item-value" id="settlementRemainingDisplay">₹0.00</span>
+            </div>
+            <div class="settlement-item highlight">
+              <span class="item-label">Immediate Cash Return at Sale</span>
+              <span class="item-value text-cash" id="immediateCashDisplay">₹0.00</span>
+            </div>
+          </div>
+
+          <div class="tds-info-alert" id="tdsInfoAlert">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="alert-icon">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <div class="tds-alert-content">
+              <strong>Why TDS is not an extra tax:</strong>
+              <p id="tdsAlertText">The 1% TDS (Sec 194S) is already deducted at source by Indian crypto exchanges on your sell order and remitted to the Income Tax Dept against your PAN. It acts as an advance tax credit that reduces your final 30% tax liability during annual ITR filing. You do NOT pay 30% + 1%.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Full Detailed Breakdown Grid -->
         <div class="breakdown-grid">
           <div class="breakdown-item">
-            <span class="item-label">Total Invested</span>
+            <span class="item-label">Total Capital Invested</span>
             <span class="item-value" id="totalInvestmentDisplay">₹0.00</span>
           </div>
           <div class="breakdown-item">
@@ -146,24 +206,24 @@
             <span class="item-value" id="totalExitDisplay">₹0.00</span>
           </div>
           <div class="breakdown-item">
-            <span class="item-label">Total Exchange Fees</span>
+            <span class="item-label">Exchange Trading Fees</span>
             <span class="item-value" id="totalFeeDisplay">₹0.00</span>
           </div>
           <div class="breakdown-item">
-            <span class="item-label" id="tdsBreakdownLabel">Sell TDS Tax</span>
-            <span class="item-value tax-highlight" id="tdsDisplay">₹0.00</span>
+            <span class="item-label">Profit Before Tax (PBT)</span>
+            <span class="item-value" id="preTaxProfitDisplay">₹0.00</span>
           </div>
           <div class="breakdown-item">
-            <span class="item-label" id="profitTaxBreakdownLabel">Profit / Capital Gains Tax</span>
+            <span class="item-label" id="profitTaxBreakdownLabel">Total Estimated Tax Liability</span>
             <span class="item-value tax-highlight" id="profitTaxDisplay">₹0.00</span>
           </div>
           <div class="breakdown-item">
-            <span class="item-label">Pre-Tax Net Profit</span>
-            <span class="item-value" id="preTaxProfitDisplay">₹0.00</span>
+            <span class="item-label" id="tdsBreakdownLabel">TDS Advance Tax Credit</span>
+            <span class="item-value text-deducted" id="tdsDisplay">₹0.00</span>
           </div>
           <div class="breakdown-item full-width">
-            <span class="item-label">Total Deductions (Fees + Taxes)</span>
-            <span class="item-value fee-highlight" id="totalDeductionsDisplay">₹0.00</span>
+            <span class="item-label">Final Net Profit After Tax (PAT)</span>
+            <span class="item-value fee-highlight" id="finalNetProfitDisplay">₹0.00</span>
           </div>
         </div>
       </section>
@@ -183,15 +243,16 @@
               <th>Qty</th>
               <th>Buy Price</th>
               <th>Sell Price</th>
-              <th>Total Invested</th>
-              <th>Fees &amp; Taxes</th>
-              <th>Net In-Hand P&amp;L</th>
-              <th>ROI</th>
+              <th>Profit Before Tax</th>
+              <th>Estimated Tax</th>
+              <th>TDS Deducted</th>
+              <th>Profit After Tax</th>
+              <th>Net ROI</th>
             </tr>
           </thead>
           <tbody id="historyTableBody">
             <tr>
-              <td colspan="8" class="empty-state">No calculations saved yet. Enter trade numbers above and click Calculate.</td>
+              <td colspan="9" class="empty-state">No calculations saved yet. Enter trade numbers above and click Calculate.</td>
             </tr>
           </tbody>
         </table>
@@ -203,4 +264,3 @@
 </body>
 
 </html>
-

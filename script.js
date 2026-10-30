@@ -23,21 +23,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Result display elements
   const statusBadge = document.getElementById('statusBadge');
-  const netProfitDisplay = document.getElementById('netProfitDisplay');
-  const roiDisplay = document.getElementById('roiDisplay');
-  const heroSubtext = document.getElementById('heroSubtext');
+  const pbtHighlightDisplay = document.getElementById('pbtHighlightDisplay');
+  const taxHighlightDisplay = document.getElementById('taxHighlightDisplay');
+  const taxBoxLabel = document.getElementById('taxBoxLabel');
+  const taxBoxSub = document.getElementById('taxBoxSub');
+  const patHighlightDisplay = document.getElementById('patHighlightDisplay');
+  const roiSubDisplay = document.getElementById('roiSubDisplay');
+
+  // TDS settlement card elements
+  const tdsPillBadge = document.getElementById('tdsPillBadge');
+  const settlementTaxLabel = document.getElementById('settlementTaxLabel');
+  const settlementTaxDisplay = document.getElementById('settlementTaxDisplay');
+  const settlementTdsDisplay = document.getElementById('settlementTdsDisplay');
+  const settlementRemainingLabel = document.getElementById('settlementRemainingLabel');
+  const settlementRemainingDisplay = document.getElementById('settlementRemainingDisplay');
+  const immediateCashDisplay = document.getElementById('immediateCashDisplay');
+  const tdsAlertText = document.getElementById('tdsAlertText');
+
+  // Detailed breakdown elements
   const totalInvestmentDisplay = document.getElementById('totalInvestmentDisplay');
   const totalExitDisplay = document.getElementById('totalExitDisplay');
   const totalFeeDisplay = document.getElementById('totalFeeDisplay');
-  const tdsDisplay = document.getElementById('tdsDisplay');
-  const tdsBreakdownLabel = document.getElementById('tdsBreakdownLabel');
+  const preTaxProfitDisplay = document.getElementById('preTaxProfitDisplay');
   const profitTaxDisplay = document.getElementById('profitTaxDisplay');
   const profitTaxBreakdownLabel = document.getElementById('profitTaxBreakdownLabel');
-  const preTaxProfitDisplay = document.getElementById('preTaxProfitDisplay');
-  const totalDeductionsDisplay = document.getElementById('totalDeductionsDisplay');
+  const tdsDisplay = document.getElementById('tdsDisplay');
+  const tdsBreakdownLabel = document.getElementById('tdsBreakdownLabel');
+  const finalNetProfitDisplay = document.getElementById('finalNetProfitDisplay');
   const historyTableBody = document.getElementById('historyTableBody');
 
-  // Genuine regional fees and tax provisions
+  // Genuine regional fees and tax presets
   const countryTaxAndFeePresets = {
     INR: {
       country: '🇮🇳 India',
@@ -52,7 +67,11 @@ document.addEventListener('DOMContentLoaded', () => {
       sellTdsLabel: 'Sell TDS (Sec 194S) (%)',
       sellTdsHint: 'Section 194S: 1.0% TDS deducted at source by Indian exchanges on every sell order.',
       profitTaxLabel: 'Flat VDA Profit Tax (%)',
-      profitTaxHint: 'Section 115BBH: 30% flat income tax on net cryptocurrency profits.'
+      profitTaxHint: 'Section 115BBH: 30% flat income tax on net cryptocurrency profits.',
+      taxBoxLabel: 'Estimated Indian Tax (30%)',
+      taxBoxSub: 'Sec 115BBH flat 30% tax liability',
+      tdsPill: '1% TDS (Sec 194S)',
+      tdsAlert: 'The 1% TDS (Sec 194S) is already deducted at source by Indian crypto exchanges on your sell order and remitted to the Income Tax Dept against your PAN. It acts as an advance tax credit that reduces your final 30% tax liability during annual ITR filing. You do NOT pay 30% + 1%.'
     },
     USD: {
       country: '🇺🇸 USA',
@@ -67,7 +86,11 @@ document.addEventListener('DOMContentLoaded', () => {
       sellTdsLabel: 'Trade Withholding (%)',
       sellTdsHint: 'US exchanges do not withhold tax at trade execution.',
       profitTaxLabel: 'Est. Capital Gains Tax (%)',
-      profitTaxHint: 'Estimated Federal Capital Gains Tax (short/long-term rate).'
+      profitTaxHint: 'Estimated Federal Capital Gains Tax (short/long-term rate).',
+      taxBoxLabel: 'Estimated CGT (15%)',
+      taxBoxSub: 'Federal capital gains tax liability',
+      tdsPill: 'Trade Withholding (0%)',
+      tdsAlert: 'US exchanges do not deduct taxes at the time of trade. You report and settle your capital gains tax directly with the IRS during annual tax filing.'
     },
     EUR: {
       country: '🇪🇺 Europe',
@@ -82,7 +105,11 @@ document.addEventListener('DOMContentLoaded', () => {
       sellTdsLabel: 'Trade Withholding (%)',
       sellTdsHint: 'European exchanges do not withhold tax at trade execution.',
       profitTaxLabel: 'Est. Flat / CGT Tax (%)',
-      profitTaxHint: 'Standard European flat capital gains tax on realized crypto gains.'
+      profitTaxHint: 'Standard European flat capital gains tax on realized crypto gains.',
+      taxBoxLabel: 'Estimated Flat Tax (30%)',
+      taxBoxSub: 'Standard European capital gains rate',
+      tdsPill: 'Trade Withholding (0%)',
+      tdsAlert: 'European exchanges do not withhold taxes at the transaction level. You declare and settle crypto profits directly with your local tax authority.'
     },
     GBP: {
       country: '🇬🇧 UK',
@@ -97,7 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
       sellTdsLabel: 'HMRC Withholding (%)',
       sellTdsHint: 'UK brokers do not withhold tax at trade execution.',
       profitTaxLabel: 'HMRC Capital Gains Tax (%)',
-      profitTaxHint: 'HMRC 20% higher-rate capital gains tax on crypto gains above allowance.'
+      profitTaxHint: 'HMRC 20% higher-rate capital gains tax on crypto gains above allowance.',
+      taxBoxLabel: 'HMRC CGT (20%)',
+      taxBoxSub: 'HMRC higher-rate capital gains tax',
+      tdsPill: 'HMRC Withholding (0%)',
+      tdsAlert: 'UK brokers do not withhold taxes at trade execution. Capital gains tax is declared and settled with HMRC during annual self-assessment.'
     }
   };
 
@@ -116,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Smooth number counter animation
   function animateValue(element, start, end, duration, prefix = '', suffix = '') {
+    if (!element) return;
     let startTimestamp = null;
     const isNegative = end < 0;
     const absEnd = Math.abs(end);
@@ -124,7 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const step = (timestamp) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      // Ease out cubic
       const easeProgress = 1 - Math.pow(1 - progress, 3);
       const current = absStart + (absEnd - absStart) * easeProgress;
       const sign = end === 0 ? '' : isNegative ? '-' : '+';
@@ -165,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
     currentSymbol = preset.symbol;
     currentLocale = preset.locale;
 
-    // Update symbols in inputs
+    // Update currency symbols in inputs
     currencySymbols.forEach((el) => {
       el.textContent = currentSymbol;
     });
@@ -185,9 +216,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (profitTaxLabel) profitTaxLabel.textContent = preset.profitTaxLabel;
     if (profitTaxHint) profitTaxHint.textContent = preset.profitTaxHint;
 
-    // Update breakdown labels
+    // Update tax box titles & alerts
+    if (taxBoxLabel) taxBoxLabel.textContent = preset.taxBoxLabel;
+    if (taxBoxSub) taxBoxSub.textContent = preset.taxBoxSub;
+    if (tdsPillBadge) tdsPillBadge.textContent = preset.tdsPill;
+    if (tdsAlertText) tdsAlertText.textContent = preset.tdsAlert;
+    if (settlementTaxLabel) settlementTaxLabel.textContent = `Estimated Tax (${preset.profitTax}%)`;
+
     if (tdsBreakdownLabel) {
-      tdsBreakdownLabel.textContent = countryKey === 'INR' ? '1% TDS Tax (Sec 194S)' : 'Trade Withholding';
+      tdsBreakdownLabel.textContent = countryKey === 'INR' ? '1% TDS Advance Credit (Sec 194S)' : 'Trade Withholding';
     }
     if (profitTaxBreakdownLabel) {
       profitTaxBreakdownLabel.textContent = countryKey === 'INR' ? '30% VDA Tax (Sec 115BBH)' : `${preset.profitTax}% Capital Gains Tax`;
@@ -203,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Currency / Country change listener
+  // Country select listener
   currencySelect.addEventListener('change', (e) => {
     applyCountryTaxDefaults(e.target.value, true);
   });
@@ -239,80 +276,104 @@ document.addEventListener('DOMContentLoaded', () => {
     const sellFeeAmount = (grossExit * sellFeePct) / 100;
     const totalFees = buyFeeAmount + sellFeeAmount;
 
-    // 3. Genuine Trade TDS / Withholding (Deducted at source on sell value)
+    // 3. Profit Before Tax (PBT) = Net Exit consideration minus total invested
+    const netExitConsideration = grossExit - sellFeeAmount;
+    const preTaxProfit = netExitConsideration - totalInvested;
+
+    // 4. Estimated Tax Liability (Section 115BBH for India)
+    // Applies strictly to positive profits; losses have 0 tax liability
+    let estimatedTaxAmount = 0;
+    if (preTaxProfit > 0 && profitTaxPct > 0) {
+      estimatedTaxAmount = (preTaxProfit * profitTaxPct) / 100;
+    }
+
+    // 5. Genuine TDS Deducted at Source by Exchange (Section 194S)
     const sellTdsAmount = (grossExit * sellTdsPct) / 100;
 
-    // 4. Pre-Tax Profit (Gross profit after exchange fees)
-    const preTaxProfit = (grossExit - sellFeeAmount) - totalInvested;
+    // 6. TDS & Tax Settlement Reconciliation (TDS is NOT an extra tax)
+    let remainingTaxToPay = 0;
+    let excessTdsRefund = 0;
+    let profitAfterTax = 0;
 
-    // 5. Capital Gains / Profit Tax (Applies to net positive gains)
-    let profitTaxAmount = 0;
-    if (preTaxProfit > 0 && profitTaxPct > 0) {
-      profitTaxAmount = (preTaxProfit * profitTaxPct) / 100;
-    }
-
-    // 6. Net In-Hand Profit / Loss
-    // In tax law, TDS is an advance credit adjusted against final capital gains tax.
-    // In-hand cash right at sale = grossExit - sellFeeAmount - sellTdsAmount - initialCapital - buyFeeAmount
-    // Final post-tax profit accounts for remaining capital gains tax if higher than TDS.
-    let netInHandPnL;
     if (preTaxProfit > 0) {
-      const totalTaxLiability = Math.max(profitTaxAmount, sellTdsAmount);
-      netInHandPnL = preTaxProfit - totalTaxLiability;
+      if (estimatedTaxAmount >= sellTdsAmount) {
+        remainingTaxToPay = estimatedTaxAmount - sellTdsAmount;
+        settlementRemainingLabel.textContent = 'Net Tax Remaining to Pay at ITR';
+        settlementRemainingDisplay.textContent = formatMoney(remainingTaxToPay);
+        settlementRemainingDisplay.className = 'item-value tax-highlight';
+      } else {
+        excessTdsRefund = sellTdsAmount - estimatedTaxAmount;
+        settlementRemainingLabel.textContent = 'Refundable Excess TDS in ITR';
+        settlementRemainingDisplay.textContent = `+ ${formatMoney(excessTdsRefund)}`;
+        settlementRemainingDisplay.className = 'item-value text-cash';
+      }
+      profitAfterTax = preTaxProfit - estimatedTaxAmount;
     } else {
-      // On loss, TDS is deducted at sale in India (can be claimed as refund in ITR), but no profit tax
-      netInHandPnL = preTaxProfit - sellTdsAmount;
+      // In case of a loss, income tax is 0.
+      // The 1% TDS deducted by the exchange can be claimed back as refund in the annual ITR
+      remainingTaxToPay = 0;
+      excessTdsRefund = sellTdsAmount;
+      settlementRemainingLabel.textContent = 'Refundable TDS in ITR (On Loss)';
+      settlementRemainingDisplay.textContent = `+ ${formatMoney(excessTdsRefund)}`;
+      settlementRemainingDisplay.className = 'item-value text-cash';
+      profitAfterTax = preTaxProfit;
     }
 
-    const totalDeductions = totalFees + sellTdsAmount + (profitTaxAmount > sellTdsAmount ? profitTaxAmount - sellTdsAmount : 0);
-    const roi = (netInHandPnL / totalInvested) * 100;
+    // 7. Immediate Cash In-Hand at Exit (Wallet balance right at sale)
+    const immediateCashAtSale = (netExitConsideration - sellTdsAmount) - totalInvested;
 
-    // Render metrics
+    // 8. Net Return on Investment (ROI)
+    const roi = (profitAfterTax / totalInvested) * 100;
+
+    // Render detailed breakdown
     totalInvestmentDisplay.textContent = formatMoney(totalInvested);
     totalExitDisplay.textContent = formatMoney(grossExit);
     totalFeeDisplay.textContent = formatMoney(totalFees);
+
+    const pbtSign = preTaxProfit >= 0 ? '+' : '-';
+    preTaxProfitDisplay.textContent = `${pbtSign}${formatMoney(preTaxProfit)}`;
+    profitTaxDisplay.textContent = formatMoney(estimatedTaxAmount);
     tdsDisplay.textContent = formatMoney(sellTdsAmount);
-    profitTaxDisplay.textContent = formatMoney(profitTaxAmount);
 
-    const preTaxSign = preTaxProfit >= 0 ? '+' : '-';
-    preTaxProfitDisplay.textContent = `${preTaxSign}${formatMoney(preTaxProfit)}`;
-    totalDeductionsDisplay.textContent = formatMoney(totalDeductions);
+    const patSign = profitAfterTax >= 0 ? '+' : '-';
+    finalNetProfitDisplay.textContent = `${patSign}${formatMoney(profitAfterTax)}`;
 
-    // Hero displays
-    animateValue(netProfitDisplay, 0, netInHandPnL, 450, currentSymbol, '');
-    animateValue(roiDisplay, 0, roi, 450, '', '% ROI');
+    // Render 3 Key Summary Cards
+    animateValue(pbtHighlightDisplay, 0, preTaxProfit, 450, currentSymbol, '');
+    animateValue(taxHighlightDisplay, 0, estimatedTaxAmount, 450, currentSymbol, '');
+    animateValue(patHighlightDisplay, 0, profitAfterTax, 450, currentSymbol, '');
 
-    if (includeProfitTax.checked) {
-      heroSubtext.textContent = `Net in hand after exchange fees, ${currentCode === 'INR' ? '1% TDS' : 'withholding'}, and capital gains tax`;
-    } else {
-      heroSubtext.textContent = `Pre-tax in hand after exchange trading fees & trade withholding`;
-    }
+    roiSubDisplay.textContent = `${patSign}${Math.abs(roi).toFixed(2)}% Net ROI`;
 
-    triggerPopAnimation(netProfitDisplay);
+    // Render TDS Settlement Card
+    settlementTaxDisplay.textContent = formatMoney(estimatedTaxAmount);
+    settlementTdsDisplay.textContent = `- ${formatMoney(sellTdsAmount)}`;
+
+    const cashSign = immediateCashAtSale >= 0 ? '+' : '-';
+    immediateCashDisplay.textContent = `${cashSign}${formatMoney(immediateCashAtSale)}`;
+
+    // Styling states for high-level cards
+    pbtHighlightDisplay.className = `tax-box-value ${preTaxProfit > 0 ? 'profit' : preTaxProfit < 0 ? 'loss' : 'neutral'}`;
+    patHighlightDisplay.className = `tax-box-value ${profitAfterTax > 0 ? 'profit' : profitAfterTax < 0 ? 'loss' : 'neutral'}`;
+
+    triggerPopAnimation(patHighlightDisplay);
     triggerPopAnimation(statusBadge);
 
-    // Status styling
-    if (netInHandPnL > 0) {
-      statusBadge.textContent = 'Net Profit';
+    // Status Badge styling
+    if (profitAfterTax > 0) {
+      statusBadge.textContent = 'Net Profit After Tax';
       statusBadge.className = 'status-badge profit';
-      netProfitDisplay.className = 'metric-value profit';
-      roiDisplay.className = 'roi-badge profit';
-    } else if (netInHandPnL < 0) {
+    } else if (profitAfterTax < 0) {
       statusBadge.textContent = 'Net Loss';
       statusBadge.className = 'status-badge loss';
-      netProfitDisplay.className = 'metric-value loss';
-      roiDisplay.className = 'roi-badge loss';
     } else {
       statusBadge.textContent = 'Break Even';
       statusBadge.className = 'status-badge neutral';
-      netProfitDisplay.className = 'metric-value neutral';
-      roiDisplay.className = 'roi-badge neutral';
     }
 
+    // Save to calculation audit history
     if (recordHistory) {
-      const sign = netInHandPnL >= 0 ? '+' : '-';
-      const formattedPnL = `${sign}${formatMoney(netInHandPnL)}`;
-      const formattedROI = `${sign}${Math.abs(roi).toFixed(2)}% ROI`;
+      const formattedROI = `${patSign}${Math.abs(roi).toFixed(2)}% ROI`;
       const preset = countryTaxAndFeePresets[currentCode] || countryTaxAndFeePresets.INR;
 
       addHistoryRecord({
@@ -320,11 +381,12 @@ document.addEventListener('DOMContentLoaded', () => {
         qty,
         buyPrice: formatMoney(buyPrice),
         sellPrice: formatMoney(sellPrice),
-        totalInvested: formatMoney(totalInvested),
-        totalDeductions: formatMoney(totalDeductions),
-        netPnL: formattedPnL,
+        pbt: `${pbtSign}${formatMoney(preTaxProfit)}`,
+        tax: formatMoney(estimatedTaxAmount),
+        tds: formatMoney(sellTdsAmount),
+        pat: `${patSign}${formatMoney(profitAfterTax)}`,
         roi: formattedROI,
-        isProfit: netInHandPnL >= 0
+        isProfit: profitAfterTax >= 0
       });
     }
   }
@@ -341,7 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (historyLogs.length === 0) {
       historyTableBody.innerHTML = `
         <tr>
-          <td colspan="8" class="empty-state">No calculations saved yet. Enter trade numbers above and click Calculate.</td>
+          <td colspan="9" class="empty-state">No calculations saved yet. Enter trade numbers above and click Calculate.</td>
         </tr>
       `;
       return;
@@ -354,9 +416,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>${item.qty}</td>
           <td>${item.buyPrice}</td>
           <td>${item.sellPrice}</td>
-          <td>${item.totalInvested}</td>
-          <td class="fee-highlight">${item.totalDeductions}</td>
-          <td class="${item.isProfit ? 'text-profit' : 'text-loss'}">${item.netPnL}</td>
+          <td class="${item.pbt.startsWith('+') ? 'text-profit' : 'text-loss'}">${item.pbt}</td>
+          <td class="tax-highlight">${item.tax}</td>
+          <td class="text-deducted">${item.tds}</td>
+          <td class="${item.isProfit ? 'text-profit' : 'text-loss'}"><strong>${item.pat}</strong></td>
           <td class="${item.isProfit ? 'text-profit' : 'text-loss'}">${item.roi}</td>
         </tr>
       `)
@@ -374,20 +437,30 @@ document.addEventListener('DOMContentLoaded', () => {
     form.reset();
     applyCountryTaxDefaults(currencySelect.value, false);
 
+    pbtHighlightDisplay.textContent = `${currentSymbol}0.00`;
+    pbtHighlightDisplay.className = 'tax-box-value neutral';
+    taxHighlightDisplay.textContent = `${currentSymbol}0.00`;
+    patHighlightDisplay.textContent = `${currentSymbol}0.00`;
+    patHighlightDisplay.className = 'tax-box-value neutral';
+    roiSubDisplay.textContent = '0.00% Net ROI';
+
+    settlementTaxDisplay.textContent = `${currentSymbol}0.00`;
+    settlementTdsDisplay.textContent = `- ${currentSymbol}0.00`;
+    settlementRemainingLabel.textContent = 'Net Tax Remaining to Pay at ITR';
+    settlementRemainingDisplay.textContent = `${currentSymbol}0.00`;
+    settlementRemainingDisplay.className = 'item-value';
+    immediateCashDisplay.textContent = `${currentSymbol}0.00`;
+
     totalInvestmentDisplay.textContent = `${currentSymbol}0.00`;
     totalExitDisplay.textContent = `${currentSymbol}0.00`;
     totalFeeDisplay.textContent = `${currentSymbol}0.00`;
-    tdsDisplay.textContent = `${currentSymbol}0.00`;
-    profitTaxDisplay.textContent = `${currentSymbol}0.00`;
     preTaxProfitDisplay.textContent = `${currentSymbol}0.00`;
-    totalDeductionsDisplay.textContent = `${currentSymbol}0.00`;
-    netProfitDisplay.textContent = `${currentSymbol}0.00`;
-    roiDisplay.textContent = '0.00% ROI';
+    profitTaxDisplay.textContent = `${currentSymbol}0.00`;
+    tdsDisplay.textContent = `${currentSymbol}0.00`;
+    finalNetProfitDisplay.textContent = `${currentSymbol}0.00`;
 
     statusBadge.textContent = 'Awaiting Input';
     statusBadge.className = 'status-badge neutral';
-    netProfitDisplay.className = 'metric-value neutral';
-    roiDisplay.className = 'roi-badge neutral';
   });
 
   clearHistoryBtn.addEventListener('click', () => {
