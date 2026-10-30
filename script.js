@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     AED: {
       country: '🇦🇪 UAE',
-      symbol: 'AED ',
+      symbol: 'AED',
       locale: 'en-AE',
       region: 'asia',
       buyFee: 0.10,
@@ -292,7 +292,9 @@ document.addEventListener('DOMContentLoaded', () => {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     });
-    return `${currencySym}${formattedNum}`;
+    const cleanSym = currencySym ? currencySym.trim() : '';
+    const needsSpace = cleanSym.length > 1 && !cleanSym.endsWith('$');
+    return `${cleanSym}${needsSpace ? ' ' : ''}${formattedNum}`;
   }
 
   // Smooth number counter animation
@@ -302,6 +304,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const isNegative = end < 0;
     const absEnd = Math.abs(end);
     const absStart = Math.abs(start);
+    const cleanPrefix = prefix ? prefix.trim() : '';
+    const needsSpace = cleanPrefix.length > 1 && !cleanPrefix.endsWith('$');
+    const displayPrefix = cleanPrefix ? `${cleanPrefix}${needsSpace ? ' ' : ''}` : '';
 
     const step = (timestamp) => {
       if (!startTimestamp) startTimestamp = timestamp;
@@ -310,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const current = absStart + (absEnd - absStart) * easeProgress;
       const sign = end === 0 ? '' : isNegative ? '-' : '+';
 
-      element.textContent = `${sign}${prefix}${current.toLocaleString(currentLocale, {
+      element.textContent = `${sign}${displayPrefix}${current.toLocaleString(currentLocale, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       })}${suffix}`;
@@ -694,6 +699,13 @@ document.addEventListener('DOMContentLoaded', () => {
   clearHistoryBtn.addEventListener('click', () => {
     historyLogs = [];
     renderHistory(false);
+  });
+
+  // Ensure clicking the wrapper focuses the input
+  document.querySelectorAll('.input-addon-wrap').forEach((wrap) => {
+    wrap.addEventListener('click', () => {
+      wrap.querySelector('input')?.focus();
+    });
   });
 
   // Initialize with selected country defaults
