@@ -1248,3 +1248,244 @@ body {
   font-size: 0.7rem;
   color: var(--text-muted);
 }
+
+/* Coin-to-Coin Converter Section (Crypto Swap) */
+.c2c-card {
+  margin-top: 4px;
+}
+
+.c2c-icon-badge {
+  background-color: #fdf2f8;
+  color: #db2777;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #fbcfe8;
+  flex-shrink: 0;
+}
+
+.c2c-popular-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.c2c-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.c2c-preset-pairs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.preset-pair-btn {
+  background: var(--neutral-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.preset-pair-btn:hover {
+  border-color: #db2777;
+  color: #db2777;
+  background: #fdf2f8;
+}
+
+.preset-pair-btn.active {
+  background: #fdf2f8;
+  border-color: #f472b6;
+  color: #db2777;
+}
+
+.c2c-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.c2c-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .c2c-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.c2c-box {
+  background: #fafaf9;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.c2c-box.to-box {
+  background: #fdfaf6;
+  border-color: #fed7aa;
+}
+
+.c2c-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.c2c-box-header label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.c2c-value-sub {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.c2c-middle-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.c2c-fee-setting {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.c2c-fee-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.fee-number-input {
+  width: 48px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-main);
+  outline: none;
+}
+
+.fee-number-input:focus {
+  border-color: var(--primary);
+}
+
+.c2c-receive-badge {
+  display: flex;
+  align-items: center;
+}
+
+.fee-deducted-note {
+  font-size: 0.7rem;
+  color: #ea580c;
+  background: #fff7ed;
+  border: 1px solid #ffedd5;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 600;
+}
+
+/* C2C Breakdown Banner */
+.c2c-breakdown-banner {
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  border-radius: 10px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.c2c-rate-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.c2c-rate-headline {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #9d174d;
+}
+
+.c2c-rate-inverse {
+  font-size: 0.75rem;
+  color: #be185d;
+  font-weight: 500;
+}
+
+.c2c-breakdown-items {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.c2c-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.c2c-detail-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.c2c-detail-val {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.text-fee-deducted {
+  color: #e11d48;
+}
+
+.c2c-detail-item.highlight .c2c-detail-val {
+  font-size: 1.05rem;
+  color: #15803d;
+}

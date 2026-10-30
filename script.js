@@ -1150,28 +1150,220 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Tool Navigation Scroll Sync
-  if (navCalcBtn && navConvBtn) {
+  const navC2cBtn = document.getElementById('navC2cBtn');
+
+  function setActiveNav(activeBtn) {
+    [navCalcBtn, navConvBtn, navC2cBtn].forEach((btn) => {
+      if (btn) btn.classList.toggle('active', btn === activeBtn);
+    });
+  }
+
+  if (navCalcBtn) {
     navCalcBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      navCalcBtn.classList.add('active');
-      navConvBtn.classList.remove('active');
+      setActiveNav(navCalcBtn);
       document.getElementById('calculatorSection')?.scrollIntoView({ behavior: 'smooth' });
     });
+  }
 
+  if (navConvBtn) {
     navConvBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      navConvBtn.classList.add('active');
-      navCalcBtn.classList.remove('active');
+      setActiveNav(navConvBtn);
       document.getElementById('converterSection')?.scrollIntoView({ behavior: 'smooth' });
     });
   }
+
+  if (navC2cBtn) {
+    navC2cBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      setActiveNav(navC2cBtn);
+      document.getElementById('c2cSection')?.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  // ==========================================
+  // COIN-TO-COIN CONVERTER (CRYPTO SWAP) MODULE
+  // ==========================================
+  const c2cFromCoin = document.getElementById('c2cFromCoin');
+  const c2cToCoin = document.getElementById('c2cToCoin');
+  const c2cFromAmount = document.getElementById('c2cFromAmount');
+  const c2cToAmount = document.getElementById('c2cToAmount');
+  const c2cFromUnit = document.getElementById('c2cFromUnit');
+  const c2cToUnit = document.getElementById('c2cToUnit');
+  const c2cFromUsdValue = document.getElementById('c2cFromUsdValue');
+  const c2cToUsdValue = document.getElementById('c2cToUsdValue');
+  const c2cSwapDirectionBtn = document.getElementById('c2cSwapDirectionBtn');
+  const c2cFeePct = document.getElementById('c2cFeePct');
+  const c2cFeeDeductedNote = document.getElementById('c2cFeeDeductedNote');
+  const c2cRateHeadline = document.getElementById('c2cRateHeadline');
+  const c2cInverseRate = document.getElementById('c2cInverseRate');
+  const c2cGrossVal = document.getElementById('c2cGrossVal');
+  const c2cFeeVal = document.getElementById('c2cFeeVal');
+  const c2cNetReceivedVal = document.getElementById('c2cNetReceivedVal');
+  const c2cFromChips = document.getElementById('c2cFromChips');
+  const c2cPresetPairs = document.getElementById('c2cPresetPairs');
+
+  let c2cActiveTrigger = 'from'; // 'from' or 'to'
+
+  function getCoinSymbol(selectEl) {
+    const opt = selectEl ? selectEl.selectedOptions[0] : null;
+    return opt ? opt.dataset.symbol : '';
+  }
+
+  function recalcC2C(trigger = c2cActiveTrigger) {
+    if (!c2cFromCoin || !c2cToCoin) return;
+
+    const fromCoinId = c2cFromCoin.value;
+    const toCoinId = c2cToCoin.value;
+    const fromSymbol = getCoinSymbol(c2cFromCoin);
+    const toSymbol = getCoinSymbol(c2cToCoin);
+    const feePercent = parseFloat(c2cFeePct.value) || 0;
+
+    if (c2cFromUnit) c2cFromUnit.textContent = fromSymbol;
+    if (c2cToUnit) c2cToUnit.textContent = toSymbol;
+    if (c2cFeeDeductedNote) c2cFeeDeductedNote.textContent = `Includes ${feePercent.toFixed(2)}% fee deduction`;
+
+    const fromUsdRate = getActiveCoinRate(fromCoinId, 'usd');
+    const toUsdRate = getActiveCoinRate(toCoinId, 'usd');
+
+    if (fromUsdRate <= 0 || toUsdRate <= 0) return;
+
+    // Rate: How many ToCoins per 1 FromCoin
+    const swapRate = fromUsdRate / toUsdRate;
+    const inverseRate = toUsdRate / fromUsdRate;
+
+    // Update headline rates
+    const formattedSwapRate = swapRate >= 1 ? swapRate.toFixed(4) : swapRate.toFixed(6);
+    const formattedInverseRate = inverseRate >= 1 ? inverseRate.toFixed(4) : inverseRate.toFixed(6);
+    if (c2cRateHeadline) c2cRateHeadline.textContent = `1 ${fromSymbol} = ${formattedSwapRate} ${toSymbol}`;
+    if (c2cInverseRate) c2cInverseRate.textContent = `1 ${toSymbol} = ${formattedInverseRate} ${fromSymbol}`;
+
+    if (trigger === 'from') {
+      const fromQty = parseFloat(c2cFromAmount.value) || 0;
+      const grossReceived = fromQty * swapRate;
+      const feeAmount = (grossReceived * feePercent) / 100;
+      const netReceived = Math.max(0, grossReceived - feeAmount);
+
+      c2cToAmount.value = netReceived > 0 ? (netReceived >= 1 ? parseFloat(netReceived.toFixed(6)) : parseFloat(netReceived.toFixed(8))) : '';
+
+      const fromUsd = fromQty * fromUsdRate;
+      const toUsd = netReceived * toUsdRate;
+      if (c2cFromUsdValue) c2cFromUsdValue.textContent = `≈ $${fromUsd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+      if (c2cToUsdValue) c2cToUsdValue.textContent = `≈ $${toUsd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+
+      if (c2cGrossVal) c2cGrossVal.textContent = `${grossReceived.toFixed(4)} ${toSymbol}`;
+      if (c2cFeeVal) c2cFeeVal.textContent = `-${feeAmount.toFixed(4)} ${toSymbol} (${feePercent.toFixed(2)}%)`;
+      if (c2cNetReceivedVal) c2cNetReceivedVal.textContent = `${netReceived.toFixed(4)} ${toSymbol}`;
+    } else {
+      const netReceived = parseFloat(c2cToAmount.value) || 0;
+      const grossReceived = netReceived / (1 - feePercent / 100);
+      const fromQty = grossReceived / swapRate;
+      const feeAmount = grossReceived - netReceived;
+
+      c2cFromAmount.value = fromQty > 0 ? (fromQty >= 1 ? parseFloat(fromQty.toFixed(6)) : parseFloat(fromQty.toFixed(8))) : '';
+
+      const fromUsd = fromQty * fromUsdRate;
+      const toUsd = netReceived * toUsdRate;
+      if (c2cFromUsdValue) c2cFromUsdValue.textContent = `≈ $${fromUsd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+      if (c2cToUsdValue) c2cToUsdValue.textContent = `≈ $${toUsd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+
+      if (c2cGrossVal) c2cGrossVal.textContent = `${grossReceived.toFixed(4)} ${toSymbol}`;
+      if (c2cFeeVal) c2cFeeVal.textContent = `-${feeAmount.toFixed(4)} ${toSymbol} (${feePercent.toFixed(2)}%)`;
+      if (c2cNetReceivedVal) c2cNetReceivedVal.textContent = `${netReceived.toFixed(4)} ${toSymbol}`;
+    }
+
+    // Update active preset pair button styling if matched
+    if (c2cPresetPairs) {
+      c2cPresetPairs.querySelectorAll('.preset-pair-btn').forEach((btn) => {
+        const matches = btn.dataset.from === fromCoinId && btn.dataset.to === toCoinId;
+        btn.classList.toggle('active', matches);
+      });
+    }
+  }
+
+  // C2C Listeners
+  if (c2cFromAmount) {
+    c2cFromAmount.addEventListener('input', () => {
+      c2cActiveTrigger = 'from';
+      recalcC2C('from');
+      if (c2cFromChips) {
+        c2cFromChips.querySelectorAll('.preset-chip').forEach((b) => {
+          b.classList.toggle('active', parseFloat(b.dataset.val) === parseFloat(c2cFromAmount.value));
+        });
+      }
+    });
+  }
+
+  if (c2cToAmount) {
+    c2cToAmount.addEventListener('input', () => {
+      c2cActiveTrigger = 'to';
+      recalcC2C('to');
+    });
+  }
+
+  if (c2cFromCoin) {
+    c2cFromCoin.addEventListener('change', () => {
+      recalcC2C('from');
+    });
+  }
+
+  if (c2cToCoin) {
+    c2cToCoin.addEventListener('change', () => {
+      recalcC2C('from');
+    });
+  }
+
+  if (c2cFeePct) {
+    c2cFeePct.addEventListener('input', () => {
+      recalcC2C(c2cActiveTrigger);
+    });
+  }
+
+  if (c2cSwapDirectionBtn) {
+    c2cSwapDirectionBtn.addEventListener('click', () => {
+      const tempCoin = c2cFromCoin.value;
+      c2cFromCoin.value = c2cToCoin.value;
+      c2cToCoin.value = tempCoin;
+      recalcC2C('from');
+    });
+  }
+
+  if (c2cFromChips) {
+    c2cFromChips.querySelectorAll('.preset-chip').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        c2cFromChips.querySelectorAll('.preset-chip').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        c2cFromAmount.value = btn.dataset.val;
+        c2cActiveTrigger = 'from';
+        recalcC2C('from');
+      });
+    });
+  }
+
+  if (c2cPresetPairs) {
+    c2cPresetPairs.querySelectorAll('.preset-pair-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        c2cPresetPairs.querySelectorAll('.preset-pair-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        c2cFromCoin.value = btn.dataset.from;
+        c2cToCoin.value = btn.dataset.to;
+        recalcC2C('from');
+      });
+    });
+  }
+
+  // Initialize Coin-to-Coin Converter
+  recalcC2C('from');
 
   // Initialize Converter on load
   updateConverterLabels();
   syncUnitRateFromMarket();
   recalcConversion('crypto');
   // Attempt background live rate fetch
-  fetchLiveCoinGeckoRates();
+  fetchLiveCoinGeckoRates().then(() => {
+    recalcC2C('from');
+  });
 
   // Ensure clicking the wrapper focuses the input
   document.querySelectorAll('.input-addon-wrap').forEach((wrap) => {

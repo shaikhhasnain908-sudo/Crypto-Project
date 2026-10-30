@@ -47,6 +47,13 @@
         </svg>
         <span>Crypto-to-Money Converter</span>
       </a>
+      <a href="#c2cSection" class="tool-nav-btn" id="navC2cBtn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M16 12l-4-4-4 4M8 12l4 4 4-4"></path>
+        </svg>
+        <span>Coin-to-Coin Converter</span>
+      </a>
     </nav>
 
     <div class="main-grid" id="calculatorSection">
@@ -435,6 +442,147 @@
       </div>
     </section>
 
+    <!-- Coin-to-Coin Converter Section (Crypto Swap) -->
+    <section class="card c2c-card" id="c2cSection">
+      <div class="card-header">
+        <div class="converter-header-title">
+          <div class="c2c-icon-badge">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M16 12l-4-4-4 4M8 12l4 4 4-4"></path>
+            </svg>
+          </div>
+          <div>
+            <h2>Coin-to-Coin Converter (Crypto Swap)</h2>
+            <p class="section-subtext">Convert one coin into another (e.g. Bitcoin to Ethereum) with real-time exchange rates and estimated fee deduction.</p>
+          </div>
+        </div>
+
+        <div class="c2c-popular-wrap">
+          <span class="c2c-badge">⚡ Popular:</span>
+          <div class="c2c-preset-pairs" id="c2cPresetPairs">
+            <button type="button" class="preset-pair-btn active" data-from="bitcoin" data-to="ethereum">BTC ⇄ ETH</button>
+            <button type="button" class="preset-pair-btn" data-from="ethereum" data-to="solana">ETH ⇄ SOL</button>
+            <button type="button" class="preset-pair-btn" data-from="solana" data-to="tether">SOL ⇄ USDT</button>
+            <button type="button" class="preset-pair-btn" data-from="binancecoin" data-to="bitcoin">BNB ⇄ BTC</button>
+            <button type="button" class="preset-pair-btn" data-from="bitcoin" data-to="tether">BTC ⇄ USDT</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="c2c-body">
+        <div class="c2c-grid">
+          <!-- From Coin Box -->
+          <div class="c2c-box from-box">
+            <div class="c2c-box-header">
+              <label for="c2cFromAmount">You Send / From</label>
+              <div class="select-inline-wrap">
+                <select id="c2cFromCoin" class="form-control select-compact">
+                  <option value="bitcoin" data-symbol="BTC" selected>Bitcoin (BTC)</option>
+                  <option value="ethereum" data-symbol="ETH">Ethereum (ETH)</option>
+                  <option value="solana" data-symbol="SOL">Solana (SOL)</option>
+                  <option value="tether" data-symbol="USDT">Tether (USDT)</option>
+                  <option value="binancecoin" data-symbol="BNB">Binance Coin (BNB)</option>
+                  <option value="ripple" data-symbol="XRP">XRP (XRP)</option>
+                  <option value="cardano" data-symbol="ADA">Cardano (ADA)</option>
+                  <option value="dogecoin" data-symbol="DOGE">Dogecoin (DOGE)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="converter-input-wrap">
+              <input type="number" id="c2cFromAmount" class="converter-num-input" placeholder="1.0" step="any" min="0" value="1">
+              <span class="converter-unit" id="c2cFromUnit">BTC</span>
+            </div>
+
+            <div class="c2c-value-sub" id="c2cFromUsdValue">≈ $78,437.00 USD</div>
+
+            <div class="quick-preset-chips" id="c2cFromChips">
+              <button type="button" class="preset-chip" data-val="0.05">0.05</button>
+              <button type="button" class="preset-chip" data-val="0.1">0.1</button>
+              <button type="button" class="preset-chip" data-val="0.5">0.5</button>
+              <button type="button" class="preset-chip active" data-val="1">1.0</button>
+              <button type="button" class="preset-chip" data-val="5">5.0</button>
+            </div>
+          </div>
+
+          <!-- Central Swap & Fee Controls -->
+          <div class="c2c-middle-controls">
+            <button type="button" id="c2cSwapDirectionBtn" class="swap-direction-btn" title="Swap coins direction">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 16V4M7 4L3 8M7 4L11 8M17 8v12M17 20l4-4M17 20l-4-4"/>
+              </svg>
+            </button>
+
+            <div class="c2c-fee-setting">
+              <label for="c2cFeePct">Swap Fee:</label>
+              <div class="c2c-fee-input-wrap">
+                <input type="number" id="c2cFeePct" class="fee-number-input" value="0.2" step="0.05" min="0" max="10">
+                <span>%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- To Coin Box (You Receive) -->
+          <div class="c2c-box to-box">
+            <div class="c2c-box-header">
+              <label for="c2cToAmount">You Receive (After Fee)</label>
+              <div class="select-inline-wrap">
+                <select id="c2cToCoin" class="form-control select-compact">
+                  <option value="bitcoin" data-symbol="BTC">Bitcoin (BTC)</option>
+                  <option value="ethereum" data-symbol="ETH" selected>Ethereum (ETH)</option>
+                  <option value="solana" data-symbol="SOL">Solana (SOL)</option>
+                  <option value="tether" data-symbol="USDT">Tether (USDT)</option>
+                  <option value="binancecoin" data-symbol="BNB">Binance Coin (BNB)</option>
+                  <option value="ripple" data-symbol="XRP">XRP (XRP)</option>
+                  <option value="cardano" data-symbol="ADA">Cardano (ADA)</option>
+                  <option value="dogecoin" data-symbol="DOGE">Dogecoin (DOGE)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="converter-input-wrap receive-wrap">
+              <input type="number" id="c2cToAmount" class="converter-num-input" placeholder="0.00" step="any" min="0">
+              <span class="converter-unit" id="c2cToUnit">ETH</span>
+            </div>
+
+            <div class="c2c-value-sub" id="c2cToUsdValue">≈ $78,280.12 USD</div>
+
+            <div class="c2c-receive-badge">
+              <span class="fee-deducted-note" id="c2cFeeDeductedNote">Includes 0.20% fee deduction</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Swap Rate Breakdown Banner -->
+        <div class="c2c-breakdown-banner">
+          <div class="c2c-rate-main">
+            <div class="c2c-rate-headline" id="c2cRateHeadline">
+              1 BTC = 34.8500 ETH
+            </div>
+            <div class="c2c-rate-inverse" id="c2cInverseRate">
+              1 ETH = 0.02869 BTC
+            </div>
+          </div>
+
+          <div class="c2c-breakdown-items">
+            <div class="c2c-detail-item">
+              <span class="c2c-detail-label">Gross Received:</span>
+              <span class="c2c-detail-val" id="c2cGrossVal">34.8500 ETH</span>
+            </div>
+            <div class="c2c-detail-item">
+              <span class="c2c-detail-label">Estimated Fee Deduction:</span>
+              <span class="c2c-detail-val text-fee-deducted" id="c2cFeeVal">-0.0697 ETH (0.20%)</span>
+            </div>
+            <div class="c2c-detail-item highlight">
+              <span class="c2c-detail-label">Net You Receive:</span>
+              <span class="c2c-detail-val text-profit" id="c2cNetReceivedVal">34.7803 ETH</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Trade History / Audit Log -->
     <section class="card history-card">
       <div class="card-header">
@@ -462,16 +610,6 @@
             </tr>
           </tbody>
         </table>
-        <!-- Live Genuine Market Prices Grid -->
-        <div class="genuine-prices-section">
-          <div class="genuine-prices-header">
-            <span class="genuine-prices-title">📊 Genuine Live Market Prices (All Coins)</span>
-            <span class="genuine-prices-sub" id="pricesCurrencyLabel">Values displayed in INR (₹)</span>
-          </div>
-          <div class="coin-prices-grid" id="coinPricesGrid">
-            <!-- Dynamically populated cards for all 8 coins -->
-          </div>
-        </div>
       </div>
     </section>
   </div>
