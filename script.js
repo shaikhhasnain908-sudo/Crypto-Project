@@ -587,18 +587,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // 8. Net Return on Investment (ROI)
     const roi = (profitAfterTax / totalInvested) * 100;
 
-    // Render detailed breakdown
-    totalInvestmentDisplay.textContent = formatMoney(totalInvested);
-    totalExitDisplay.textContent = formatMoney(grossExit);
-    totalFeeDisplay.textContent = formatMoney(totalFees);
+    // Render detailed breakdown if elements exist
+    if (totalInvestmentDisplay) totalInvestmentDisplay.textContent = formatMoney(totalInvested);
+    if (totalExitDisplay) totalExitDisplay.textContent = formatMoney(grossExit);
+    if (totalFeeDisplay) totalFeeDisplay.textContent = formatMoney(totalFees);
 
     const pbtSign = preTaxProfit >= 0 ? '+' : '-';
-    preTaxProfitDisplay.textContent = `${pbtSign}${formatMoney(preTaxProfit)}`;
-    profitTaxDisplay.textContent = formatMoney(estimatedTaxAmount);
-    tdsDisplay.textContent = formatMoney(sellTdsAmount);
+    if (preTaxProfitDisplay) preTaxProfitDisplay.textContent = `${pbtSign}${formatMoney(preTaxProfit)}`;
+    if (profitTaxDisplay) profitTaxDisplay.textContent = formatMoney(estimatedTaxAmount);
+    if (tdsDisplay) tdsDisplay.textContent = formatMoney(sellTdsAmount);
 
     const patSign = profitAfterTax >= 0 ? '+' : '-';
-    finalNetProfitDisplay.textContent = `${patSign}${formatMoney(profitAfterTax)}`;
+    if (finalNetProfitDisplay) finalNetProfitDisplay.textContent = `${patSign}${formatMoney(profitAfterTax)}`;
 
     // Render 3 Key Summary Cards
     animateValue(pbtHighlightDisplay, 0, preTaxProfit, 450, currentSymbol, '');
@@ -775,13 +775,13 @@ document.addEventListener('DOMContentLoaded', () => {
     settlementRemainingDisplay.className = 'item-value';
     immediateCashDisplay.textContent = `${currentSymbol}0.00`;
 
-    totalInvestmentDisplay.textContent = `${currentSymbol}0.00`;
-    totalExitDisplay.textContent = `${currentSymbol}0.00`;
-    totalFeeDisplay.textContent = `${currentSymbol}0.00`;
-    preTaxProfitDisplay.textContent = `${currentSymbol}0.00`;
-    profitTaxDisplay.textContent = `${currentSymbol}0.00`;
-    tdsDisplay.textContent = `${currentSymbol}0.00`;
-    finalNetProfitDisplay.textContent = `${currentSymbol}0.00`;
+    if (totalInvestmentDisplay) totalInvestmentDisplay.textContent = `${currentSymbol}0.00`;
+    if (totalExitDisplay) totalExitDisplay.textContent = `${currentSymbol}0.00`;
+    if (totalFeeDisplay) totalFeeDisplay.textContent = `${currentSymbol}0.00`;
+    if (preTaxProfitDisplay) preTaxProfitDisplay.textContent = `${currentSymbol}0.00`;
+    if (profitTaxDisplay) profitTaxDisplay.textContent = `${currentSymbol}0.00`;
+    if (tdsDisplay) tdsDisplay.textContent = `${currentSymbol}0.00`;
+    if (finalNetProfitDisplay) finalNetProfitDisplay.textContent = `${currentSymbol}0.00`;
 
     // Reset allocation bar
     if (allocBarCapital && allocLegendCapital) {
