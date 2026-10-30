@@ -744,3 +744,39 @@ body {
 .tds-alert-content p {
   margin: 0;
 }
+
+/* Region Quick Filter Tabs */
+.region-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 14px;
+  scrollbar-width: thin;
+}
+
+.region-tab {
+  background: var(--neutral-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.region-tab:hover {
+  color: var(--text-main);
+  border-color: #cbd5e1;
+}
+
+.region-tab.active {
+  background-color: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.25);
+}

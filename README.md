@@ -1,35 +1,40 @@
-# Crypto Profit After Indian Tax Calculator
+# Crypto Profit After Tax Calculator
 
-A sleek, responsive, and legally accurate cryptocurrency profit and tax calculator designed to compute **Profit Before Tax**, **Estimated Indian Tax (Section 115BBH)**, **TDS Advance Tax Credit (Section 194S)**, and final **Profit After Tax**.
-
----
-
-## 🇮🇳 Indian Crypto Tax & TDS Breakdown
-
-Many Indian crypto traders mistake **1% TDS** for an additional surcharge on top of the **30% Flat Tax**. This calculator resolves that confusion by separating TDS as an advance tax credit:
-
-1. **Profit Before Tax (PBT)**:
-   - Your gross crypto trading gain after deducting exchange buy/sell fees (`Gross Exit - Fees - Invested Capital`).
-2. **Estimated Indian Tax (30% under Section 115BBH)**:
-   - Flat 30% tax applied to your net positive crypto gains. (0% tax liability on losses; crypto losses cannot be set off against other income in India).
-3. **TDS Already Deducted (1% under Section 194S)**:
-   - Deducted upfront at source by Indian crypto exchanges (CoinDCX, WazirX, CoinSwitch) on every sell order and deposited with the Govt under your PAN.
-   - **NOT an extra tax**: When filing your annual ITR, this 1% TDS is **credited / set off against your 30% tax liability**.
-4. **Net Tax Remaining to Pay at ITR**:
-   - `Estimated Tax (30%) - TDS Already Deducted (1%)`.
-   - In case of a loss, the entire 1% TDS deducted can be claimed as an **ITR refund**.
-5. **Profit After Tax (PAT)**:
-   - Your true bottom-line in-hand profit after all legal tax obligations are settled.
-6. **Immediate Cash at Sale**:
-   - The actual money deposited into your exchange wallet at the moment of exit (`Gross Exit - Sell Fee - 1% TDS`).
+A sleek, responsive, and legally accurate cryptocurrency profit and tax calculator designed to let users select their **tax-residence country** and **tax year** to compute **Profit Before Tax (PBT)**, **Estimated Tax Liability**, and final **Take-Home Profit After Tax (PAT)**.
 
 ---
 
-## 🌍 Multi-Country Support
-- 🇮🇳 **India (INR)**: 0.20% exchange fee + 1.0% TDS (Sec 194S) + 30% Flat VDA Profit Tax (Sec 115BBH).
-- 🇺🇸 **USA (USD)**: 0.10% exchange fee + 0% withholding + 15% Federal Capital Gains Tax.
-- 🇪🇺 **Europe (EUR)**: 0.15% exchange fee + 0% withholding + 30% Flat Capital Gains Tax.
-- 🇬🇧 **United Kingdom (GBP)**: 0.20% exchange fee + 0% withholding + 20% HMRC Capital Gains Tax.
+## 🌍 Global Tax-Residence Country Selector & Regional Tabs
+
+Quick-filter tabs allow effortless switching across international jurisdictions:
+- **All Regions (Global)**
+- **Asia & Middle East**:
+  - 🇮🇳 **India (INR ₹)**: Flat 30% VDA Tax (Section 115BBH) + 1% TDS advance credit (Section 194S) + 0.20% exchange fee.
+  - 🇦🇪 **United Arab Emirates (AED د.إ)**: **0% Tax (Tax-Free)** personal crypto haven. 100% take-home returns.
+  - 🇸🇬 **Singapore (SGD S$)**: **0% Capital Gains Tax** for individual crypto investors under IRAS guidelines.
+- **Americas**:
+  - 🇺🇸 **United States (USD $)**: IRS Long-Term Capital Gains Tax (15%) or Short-Term ordinary income bracket.
+  - 🇨🇦 **Canada (CAD C$)**: CRA 50% Capital Gains inclusion rate (~20% effective tax).
+- **Europe & United Kingdom**:
+  - 🇬🇧 **United Kingdom (GBP £)**: HMRC 20% higher-rate (or 10% basic) Capital Gains Tax above annual allowance.
+  - 🇩🇪 **Germany (EUR €)**: German § 23 EStG rule — **0% completely tax-free if held > 1 year**; standard rate if sold within 1 year.
+  - 🇪🇺 **European Union (EUR €)**: 30% standard flat capital gains tax rate.
+- **Oceania**:
+  - 🇦🇺 **Australia (AUD A$)**: ATO 50% Capital Gains Tax discount for assets held > 12 months (~18.5% effective).
+
+---
+
+## 📅 Tax Year & Holding Period Selector
+- **Tax Year / Assessment Year**: Toggle between **FY 2026-27 (Current)**, **FY 2025-26**, **FY 2024-25**, and **FY 2023-24**.
+- **Holding Period Classification**: Toggle between **Long-Term (> 1 Year)** and **Short-Term (≤ 1 Year)** to dynamically unlock tax exemptions (e.g. Germany 1-year tax-free rule, Australia 50% CGT discount, US long-term rate).
+
+---
+
+## 🇮🇳 Indian Tax & TDS Advance Credit Separation
+TDS is clearly separated so users do not mistake it for an extra tax:
+- **TDS (1%)** is withheld at source by exchanges as an advance tax credit.
+- **Set-off**: Credited against your 30% tax bill at annual ITR filing.
+- **Refund**: On net loss trades, the 1% TDS is fully refundable in your ITR.
 
 ---
 

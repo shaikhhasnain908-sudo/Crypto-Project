@@ -3,6 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const resetBtn = document.getElementById('resetBtn');
   const clearHistoryBtn = document.getElementById('clearHistoryBtn');
   const currencySelect = document.getElementById('currencySelect');
+  const taxYearSelect = document.getElementById('taxYearSelect');
+  const taxYearHint = document.getElementById('taxYearHint');
+  const holdingPeriodSelect = document.getElementById('holdingPeriodSelect');
+  const holdingPeriodHint = document.getElementById('holdingPeriodHint');
+  const regionTabs = document.querySelectorAll('.region-tab');
   const currencySymbols = document.querySelectorAll('.currency-symbol');
 
   // Input elements
@@ -16,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const sellTdsInput = document.getElementById('sellTds');
   const sellTdsLabel = document.getElementById('sellTdsLabel');
   const sellTdsHint = document.getElementById('sellTdsHint');
+  const sellTdsBadge = document.getElementById('sellTdsBadge');
   const profitTaxInput = document.getElementById('profitTax');
   const profitTaxLabel = document.getElementById('profitTaxLabel');
   const profitTaxHint = document.getElementById('profitTaxHint');
@@ -32,12 +38,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // TDS settlement card elements
   const tdsPillBadge = document.getElementById('tdsPillBadge');
+  const settlementTag = document.getElementById('settlementTag');
   const settlementTaxLabel = document.getElementById('settlementTaxLabel');
   const settlementTaxDisplay = document.getElementById('settlementTaxDisplay');
+  const settlementTdsTitle = document.getElementById('settlementTdsTitle');
+  const settlementAdvanceTag = document.getElementById('settlementAdvanceTag');
   const settlementTdsDisplay = document.getElementById('settlementTdsDisplay');
   const settlementRemainingLabel = document.getElementById('settlementRemainingLabel');
   const settlementRemainingDisplay = document.getElementById('settlementRemainingDisplay');
   const immediateCashDisplay = document.getElementById('immediateCashDisplay');
+  const tdsAlertTitle = document.getElementById('tdsAlertTitle');
   const tdsAlertText = document.getElementById('tdsAlertText');
 
   // Detailed breakdown elements
@@ -52,16 +62,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const finalNetProfitDisplay = document.getElementById('finalNetProfitDisplay');
   const historyTableBody = document.getElementById('historyTableBody');
 
-  // Genuine regional fees and tax presets
+  // Multi-Country Tax Residence Presets
   const countryTaxAndFeePresets = {
     INR: {
       country: '🇮🇳 India',
       symbol: '₹',
       locale: 'en-IN',
+      region: 'asia',
       buyFee: 0.20,
       sellFee: 0.20,
       sellTds: 1.0,
-      profitTax: 30.0,
+      profitTaxLong: 30.0,
+      profitTaxShort: 30.0,
       buyFeeHint: 'CoinDCX / WazirX spot fee: 0.20%',
       sellFeeHint: 'CoinDCX / WazirX spot fee: 0.20%',
       sellTdsLabel: 'Sell TDS (Sec 194S) (%)',
@@ -71,64 +83,202 @@ document.addEventListener('DOMContentLoaded', () => {
       taxBoxLabel: 'Estimated Indian Tax (30%)',
       taxBoxSub: 'Sec 115BBH flat 30% tax liability',
       tdsPill: '1% TDS (Sec 194S)',
-      tdsAlert: 'The 1% TDS (Sec 194S) is already deducted at source by Indian crypto exchanges on your sell order and remitted to the Income Tax Dept against your PAN. It acts as an advance tax credit that reduces your final 30% tax liability during annual ITR filing. You do NOT pay 30% + 1%.'
+      settlementTag: 'Not an Extra Tax',
+      tdsAlertTitle: 'Why TDS is not an extra tax:',
+      tdsAlert: 'The 1% TDS (Sec 194S) is already deducted at source by Indian crypto exchanges on your sell order and deposited with the Income Tax Dept against your PAN. It acts as an advance tax credit that reduces your final 30% tax liability during annual ITR filing. You do NOT pay 30% + 1%.',
+      holdingHint: 'In India, Section 115BBH applies a flat 30% rate regardless of holding duration (no long-term discount).'
+    },
+    AED: {
+      country: '🇦🇪 UAE',
+      symbol: 'AED ',
+      locale: 'en-AE',
+      region: 'asia',
+      buyFee: 0.10,
+      sellFee: 0.10,
+      sellTds: 0.0,
+      profitTaxLong: 0.0,
+      profitTaxShort: 0.0,
+      buyFeeHint: 'BitOasis / Binance UAE spot fee: 0.10%',
+      sellFeeHint: 'BitOasis / Binance UAE spot fee: 0.10%',
+      sellTdsLabel: 'Trade Withholding (%)',
+      sellTdsHint: 'Zero withholding tax in UAE free zones and mainland for individual traders.',
+      profitTaxLabel: 'Personal Crypto Tax (%)',
+      profitTaxHint: 'UAE levies 0% personal income and capital gains tax on crypto trading.',
+      taxBoxLabel: 'Estimated UAE Tax (0%)',
+      taxBoxSub: 'Tax-free crypto jurisdiction',
+      tdsPill: 'Tax-Free Regime (0%)',
+      settlementTag: '100% Take-Home',
+      tdsAlertTitle: 'Tax-Exempt Crypto Haven:',
+      tdsAlert: 'The United Arab Emirates (Dubai / Abu Dhabi) imposes 0% personal capital gains tax on cryptocurrency investments. Your take-home profit is 100% of your pre-tax trading gain.',
+      holdingHint: 'Holding duration does not affect tax; individual crypto profits are completely tax-free in the UAE.'
+    },
+    SGD: {
+      country: '🇸🇬 Singapore',
+      symbol: 'S$',
+      locale: 'en-SG',
+      region: 'asia',
+      buyFee: 0.10,
+      sellFee: 0.10,
+      sellTds: 0.0,
+      profitTaxLong: 0.0,
+      profitTaxShort: 0.0,
+      buyFeeHint: 'Coinhako / Gemini SG spot fee: 0.10%',
+      sellFeeHint: 'Coinhako / Gemini SG spot fee: 0.10%',
+      sellTdsLabel: 'Trade Withholding (%)',
+      sellTdsHint: 'No withholding tax deducted on crypto transactions in Singapore.',
+      profitTaxLabel: 'Capital Gains Tax (%)',
+      profitTaxHint: 'IRAS Singapore: No capital gains tax for individual crypto investors.',
+      taxBoxLabel: 'Estimated IRAS Tax (0%)',
+      taxBoxSub: 'Tax-exempt capital gains',
+      tdsPill: 'Tax-Free CGT (0%)',
+      settlementTag: '100% Take-Home',
+      tdsAlertTitle: 'Singapore IRAS Tax Exemption:',
+      tdsAlert: 'Under Singapore Inland Revenue (IRAS) guidelines, personal investments in cryptocurrency are categorized as capital assets and are completely exempt from Capital Gains Tax.',
+      holdingHint: 'Personal investments held by individuals are exempt from capital gains tax regardless of holding duration.'
     },
     USD: {
       country: '🇺🇸 USA',
       symbol: '$',
       locale: 'en-US',
+      region: 'americas',
       buyFee: 0.10,
       sellFee: 0.10,
       sellTds: 0.0,
-      profitTax: 15.0,
+      profitTaxLong: 15.0,
+      profitTaxShort: 24.0,
       buyFeeHint: 'Binance.US / Coinbase spot fee: 0.10%',
       sellFeeHint: 'Binance.US / Coinbase spot fee: 0.10%',
       sellTdsLabel: 'Trade Withholding (%)',
       sellTdsHint: 'US exchanges do not withhold tax at trade execution.',
-      profitTaxLabel: 'Est. Capital Gains Tax (%)',
-      profitTaxHint: 'Estimated Federal Capital Gains Tax (short/long-term rate).',
-      taxBoxLabel: 'Estimated CGT (15%)',
-      taxBoxSub: 'Federal capital gains tax liability',
+      profitTaxLabel: 'Federal CGT Rate (%)',
+      profitTaxHint: 'IRS Capital Gains: 15% Long-Term (> 1 yr) or ordinary income bracket for Short-Term.',
+      taxBoxLabel: 'Estimated Federal CGT',
+      taxBoxSub: 'IRS capital gains tax liability',
       tdsPill: 'Trade Withholding (0%)',
-      tdsAlert: 'US exchanges do not deduct taxes at the time of trade. You report and settle your capital gains tax directly with the IRS during annual tax filing.'
+      settlementTag: 'Direct Settlement',
+      tdsAlertTitle: 'IRS Reporting Settlement:',
+      tdsAlert: 'US exchanges do not deduct taxes at the time of trade. You report your gains on IRS Form 8949 / Schedule D and settle your tax liability directly during annual tax filing.',
+      holdingHint: 'Assets held > 1 year qualify for lower long-term rates (0%, 15%, 20%) instead of higher short-term ordinary income rates.'
     },
-    EUR: {
-      country: '🇪🇺 Europe',
-      symbol: '€',
-      locale: 'de-DE',
-      buyFee: 0.15,
-      sellFee: 0.15,
+    CAD: {
+      country: '🇨🇦 Canada',
+      symbol: 'C$',
+      locale: 'en-CA',
+      region: 'americas',
+      buyFee: 0.10,
+      sellFee: 0.10,
       sellTds: 0.0,
-      profitTax: 30.0,
-      buyFeeHint: 'Bitvavo / Kraken EU spot fee: 0.15%',
-      sellFeeHint: 'Bitvavo / Kraken EU spot fee: 0.15%',
+      profitTaxLong: 20.0,
+      profitTaxShort: 25.0,
+      buyFeeHint: 'NDAX / Kraken Canada spot fee: 0.10%',
+      sellFeeHint: 'NDAX / Kraken Canada spot fee: 0.10%',
       sellTdsLabel: 'Trade Withholding (%)',
-      sellTdsHint: 'European exchanges do not withhold tax at trade execution.',
-      profitTaxLabel: 'Est. Flat / CGT Tax (%)',
-      profitTaxHint: 'Standard European flat capital gains tax on realized crypto gains.',
-      taxBoxLabel: 'Estimated Flat Tax (30%)',
-      taxBoxSub: 'Standard European capital gains rate',
+      sellTdsHint: 'No withholding tax at execution on Canadian regulated platforms.',
+      profitTaxLabel: 'Effective CGT Rate (%)',
+      profitTaxHint: 'CRA: 50% capital gains inclusion rate taxed at your marginal income tax bracket.',
+      taxBoxLabel: 'Estimated CRA CGT (~20%)',
+      taxBoxSub: '50% inclusion rate marginal tax',
       tdsPill: 'Trade Withholding (0%)',
-      tdsAlert: 'European exchanges do not withhold taxes at the transaction level. You declare and settle crypto profits directly with your local tax authority.'
+      settlementTag: 'Direct Settlement',
+      tdsAlertTitle: 'CRA Capital Gains Inclusion:',
+      tdsAlert: 'In Canada, 50% of your realized crypto profit is added to your taxable income and taxed at your marginal bracket. No tax is withheld at the time of trade by the exchange.',
+      holdingHint: 'Personal crypto investments qualify as capital gains; frequent day-trading may be classed as business income by CRA.'
     },
     GBP: {
       country: '🇬🇧 UK',
       symbol: '£',
       locale: 'en-GB',
+      region: 'europe',
       buyFee: 0.20,
       sellFee: 0.20,
       sellTds: 0.0,
-      profitTax: 20.0,
+      profitTaxLong: 20.0,
+      profitTaxShort: 20.0,
       buyFeeHint: 'Coinbase UK / CoinJar spot fee: 0.20%',
       sellFeeHint: 'Coinbase UK / CoinJar spot fee: 0.20%',
       sellTdsLabel: 'HMRC Withholding (%)',
       sellTdsHint: 'UK brokers do not withhold tax at trade execution.',
-      profitTaxLabel: 'HMRC Capital Gains Tax (%)',
-      profitTaxHint: 'HMRC 20% higher-rate capital gains tax on crypto gains above allowance.',
+      profitTaxLabel: 'HMRC CGT Rate (%)',
+      profitTaxHint: 'HMRC: 20% higher rate (or 10% basic rate) on crypto gains exceeding the annual allowance.',
       taxBoxLabel: 'HMRC CGT (20%)',
       taxBoxSub: 'HMRC higher-rate capital gains tax',
       tdsPill: 'HMRC Withholding (0%)',
-      tdsAlert: 'UK brokers do not withhold taxes at trade execution. Capital gains tax is declared and settled with HMRC during annual self-assessment.'
+      settlementTag: 'Direct Settlement',
+      tdsAlertTitle: 'HMRC Self-Assessment:',
+      tdsAlert: 'UK brokers do not withhold taxes at trade execution. Capital gains tax is declared and settled with HMRC during your annual self-assessment tax return.',
+      holdingHint: 'UK applies standard Capital Gains Tax rates above your annual tax-free allowance (£3,000).'
+    },
+    EUR_DE: {
+      country: '🇩🇪 Germany',
+      symbol: '€',
+      locale: 'de-DE',
+      region: 'europe',
+      buyFee: 0.15,
+      sellFee: 0.15,
+      sellTds: 0.0,
+      profitTaxLong: 0.0,
+      profitTaxShort: 26.38,
+      buyFeeHint: 'Bison / Kraken EU spot fee: 0.15%',
+      sellFeeHint: 'Bison / Kraken EU spot fee: 0.15%',
+      sellTdsLabel: 'Trade Withholding (%)',
+      sellTdsHint: 'German exchanges do not deduct withholding tax on private crypto trades.',
+      profitTaxLabel: 'German Tax Rate (§ 23 EStG) (%)',
+      profitTaxHint: '§ 23 EStG: 0% completely tax-free if held > 1 year; standard income tax if held <= 1 year.',
+      taxBoxLabel: 'German Tax (§ 23 EStG)',
+      taxBoxSub: '0% tax-free if held > 1 year',
+      tdsPill: '1-Year Rule (§ 23)',
+      settlementTag: 'Holding Rule',
+      tdsAlertTitle: 'German 1-Year Tax Exemption Rule:',
+      tdsAlert: 'Under § 23 EStG, cryptocurrency is treated as private money. If you hold your coins for more than 365 days before selling, the ENTIRE profit is 100% tax-free! Only short-term sales are taxable.',
+      holdingHint: 'Crucial: Holding > 1 year makes all profit 100% TAX-FREE under German tax law! Short-term trades are taxed at income rate.'
+    },
+    EUR: {
+      country: '🇪🇺 Europe',
+      symbol: '€',
+      locale: 'de-DE',
+      region: 'europe',
+      buyFee: 0.15,
+      sellFee: 0.15,
+      sellTds: 0.0,
+      profitTaxLong: 30.0,
+      profitTaxShort: 30.0,
+      buyFeeHint: 'Bitvavo / Kraken EU spot fee: 0.15%',
+      sellFeeHint: 'Bitvavo / Kraken EU spot fee: 0.15%',
+      sellTdsLabel: 'Trade Withholding (%)',
+      sellTdsHint: 'European exchanges do not withhold tax at trade execution.',
+      profitTaxLabel: 'Flat / CGT Rate (%)',
+      profitTaxHint: 'Standard European flat capital gains tax (e.g., France PFU 30%).',
+      taxBoxLabel: 'Estimated Flat CGT (30%)',
+      taxBoxSub: 'Standard European capital gains rate',
+      tdsPill: 'Trade Withholding (0%)',
+      settlementTag: 'Direct Settlement',
+      tdsAlertTitle: 'European Tax Declaration:',
+      tdsAlert: 'European exchanges do not withhold taxes at the transaction level. You declare and settle crypto profits directly with your local national tax authority during your annual tax return.',
+      holdingHint: 'Flat capital gains tax provisions apply; check local member state rules for specific allowances.'
+    },
+    AUD: {
+      country: '🇦🇺 Australia',
+      symbol: 'A$',
+      locale: 'en-AU',
+      region: 'oceania',
+      buyFee: 0.10,
+      sellFee: 0.10,
+      sellTds: 0.0,
+      profitTaxLong: 18.5,
+      profitTaxShort: 37.0,
+      buyFeeHint: 'CoinSpot / Swyftx spot fee: 0.10%',
+      sellFeeHint: 'CoinSpot / Swyftx spot fee: 0.10%',
+      sellTdsLabel: 'Trade Withholding (%)',
+      sellTdsHint: 'No withholding tax deducted at sale on Australian registered exchanges.',
+      profitTaxLabel: 'Effective ATO CGT Rate (%)',
+      profitTaxHint: 'ATO: 50% CGT discount for assets held > 12 months (~18.5% effective); full marginal rate for short-term.',
+      taxBoxLabel: 'Estimated ATO CGT',
+      taxBoxSub: '50% discount if held > 12 months',
+      tdsPill: '50% CGT Discount',
+      settlementTag: 'ATO Settlement',
+      tdsAlertTitle: 'Australian 50% CGT Discount:',
+      tdsAlert: 'The ATO provides a 50% Capital Gains Tax discount on crypto held for over 12 months, cutting your taxable gain in half. Australian exchanges do not withhold tax at execution.',
+      holdingHint: 'Holding for more than 12 months entitles you to a 50% Capital Gains discount under ATO tax rules.'
     }
   };
 
@@ -189,6 +339,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 700);
   }
 
+  // Region Filter Tabs Handling
+  regionTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      regionTabs.forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+      const selectedRegion = tab.dataset.region;
+
+      const optgroups = currencySelect.querySelectorAll('optgroup');
+      let firstVisibleValue = null;
+      let currentStillVisible = false;
+
+      optgroups.forEach((group) => {
+        const groupRegion = group.dataset.region;
+        const matches = selectedRegion === 'all' || groupRegion === selectedRegion;
+        group.style.display = matches ? '' : 'none';
+
+        if (matches) {
+          const options = group.querySelectorAll('option');
+          options.forEach((opt) => {
+            if (!firstVisibleValue) firstVisibleValue = opt.value;
+            if (opt.value === currencySelect.value) currentStillVisible = true;
+          });
+        }
+      });
+
+      if (!currentStillVisible && firstVisibleValue) {
+        currencySelect.value = firstVisibleValue;
+        applyCountryTaxDefaults(firstVisibleValue, true);
+      }
+    });
+  });
+
   // Apply genuine country presets for fee and tax rules
   function applyCountryTaxDefaults(countryKey, recalculate = true) {
     const preset = countryTaxAndFeePresets[countryKey] || countryTaxAndFeePresets.INR;
@@ -201,6 +383,10 @@ document.addEventListener('DOMContentLoaded', () => {
       el.textContent = currentSymbol;
     });
 
+    // Determine tax rate based on holding duration
+    const isLongTerm = holdingPeriodSelect.value === 'long';
+    const applicableTaxRate = isLongTerm ? preset.profitTaxLong : preset.profitTaxShort;
+
     // Auto-set fee values and hints
     buyFeeInput.value = preset.buyFee;
     sellFeeInput.value = preset.sellFee;
@@ -212,22 +398,39 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sellTdsLabel) sellTdsLabel.textContent = preset.sellTdsLabel;
     if (sellTdsHint) sellTdsHint.textContent = preset.sellTdsHint;
 
-    profitTaxInput.value = preset.profitTax;
+    profitTaxInput.value = applicableTaxRate;
     if (profitTaxLabel) profitTaxLabel.textContent = preset.profitTaxLabel;
     if (profitTaxHint) profitTaxHint.textContent = preset.profitTaxHint;
+    if (holdingPeriodHint) holdingPeriodHint.textContent = preset.holdingHint;
+
+    // Update tax year hint
+    const yearVal = taxYearSelect.value;
+    if (taxYearHint) {
+      if (countryKey === 'INR') {
+        taxYearHint.textContent = `India Financial Year ${yearVal}-${parseInt(yearVal, 10) + 1} (AY ${parseInt(yearVal, 10) + 1}-${parseInt(yearVal, 10) + 2}) Section 115BBH rules`;
+      } else {
+        taxYearHint.textContent = `${preset.country} tax rules and allowances active for Tax Year ${yearVal}`;
+      }
+    }
 
     // Update tax box titles & alerts
-    if (taxBoxLabel) taxBoxLabel.textContent = preset.taxBoxLabel;
+    if (taxBoxLabel) taxBoxLabel.textContent = `${preset.taxBoxLabel} (${applicableTaxRate}%)`;
     if (taxBoxSub) taxBoxSub.textContent = preset.taxBoxSub;
     if (tdsPillBadge) tdsPillBadge.textContent = preset.tdsPill;
+    if (settlementTag) settlementTag.textContent = preset.settlementTag;
+    if (tdsAlertTitle) tdsAlertTitle.textContent = preset.tdsAlertTitle;
     if (tdsAlertText) tdsAlertText.textContent = preset.tdsAlert;
-    if (settlementTaxLabel) settlementTaxLabel.textContent = `Estimated Tax (${preset.profitTax}%)`;
+    if (settlementTaxLabel) settlementTaxLabel.textContent = `Estimated Tax (${applicableTaxRate}%)`;
+
+    if (sellTdsBadge) {
+      sellTdsBadge.textContent = countryKey === 'INR' ? 'Advance Tax' : 'Direct Tax';
+    }
 
     if (tdsBreakdownLabel) {
       tdsBreakdownLabel.textContent = countryKey === 'INR' ? '1% TDS Advance Credit (Sec 194S)' : 'Trade Withholding';
     }
     if (profitTaxBreakdownLabel) {
-      profitTaxBreakdownLabel.textContent = countryKey === 'INR' ? '30% VDA Tax (Sec 115BBH)' : `${preset.profitTax}% Capital Gains Tax`;
+      profitTaxBreakdownLabel.textContent = countryKey === 'INR' ? '30% VDA Tax (Sec 115BBH)' : `${applicableTaxRate}% Capital Gains Tax`;
     }
 
     flashFieldUpdate(buyFeeInput);
@@ -243,6 +446,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // Country select listener
   currencySelect.addEventListener('change', (e) => {
     applyCountryTaxDefaults(e.target.value, true);
+  });
+
+  // Tax year listener
+  taxYearSelect.addEventListener('change', () => {
+    applyCountryTaxDefaults(currencySelect.value, true);
+  });
+
+  // Holding period listener
+  holdingPeriodSelect.addEventListener('change', () => {
+    applyCountryTaxDefaults(currencySelect.value, true);
   });
 
   // Toggle profit tax checkbox listener
@@ -280,7 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const netExitConsideration = grossExit - sellFeeAmount;
     const preTaxProfit = netExitConsideration - totalInvested;
 
-    // 4. Estimated Tax Liability (Section 115BBH for India)
+    // 4. Estimated Tax Liability
     // Applies strictly to positive profits; losses have 0 tax liability
     let estimatedTaxAmount = 0;
     if (preTaxProfit > 0 && profitTaxPct > 0) {
@@ -295,28 +508,42 @@ document.addEventListener('DOMContentLoaded', () => {
     let excessTdsRefund = 0;
     let profitAfterTax = 0;
 
-    if (preTaxProfit > 0) {
-      if (estimatedTaxAmount >= sellTdsAmount) {
-        remainingTaxToPay = estimatedTaxAmount - sellTdsAmount;
-        settlementRemainingLabel.textContent = 'Net Tax Remaining to Pay at ITR';
-        settlementRemainingDisplay.textContent = formatMoney(remainingTaxToPay);
-        settlementRemainingDisplay.className = 'item-value tax-highlight';
+    if (currentCode === 'INR') {
+      if (preTaxProfit > 0) {
+        if (estimatedTaxAmount >= sellTdsAmount) {
+          remainingTaxToPay = estimatedTaxAmount - sellTdsAmount;
+          settlementRemainingLabel.textContent = 'Net Tax Remaining to Pay at ITR';
+          settlementRemainingDisplay.textContent = formatMoney(remainingTaxToPay);
+          settlementRemainingDisplay.className = 'item-value tax-highlight';
+        } else {
+          excessTdsRefund = sellTdsAmount - estimatedTaxAmount;
+          settlementRemainingLabel.textContent = 'Refundable Excess TDS in ITR';
+          settlementRemainingDisplay.textContent = `+ ${formatMoney(excessTdsRefund)}`;
+          settlementRemainingDisplay.className = 'item-value text-cash';
+        }
+        profitAfterTax = preTaxProfit - estimatedTaxAmount;
       } else {
-        excessTdsRefund = sellTdsAmount - estimatedTaxAmount;
-        settlementRemainingLabel.textContent = 'Refundable Excess TDS in ITR';
+        // In case of an Indian loss, tax is 0. 1% TDS can be claimed back in annual ITR
+        remainingTaxToPay = 0;
+        excessTdsRefund = sellTdsAmount;
+        settlementRemainingLabel.textContent = 'Refundable TDS in ITR (On Loss)';
         settlementRemainingDisplay.textContent = `+ ${formatMoney(excessTdsRefund)}`;
         settlementRemainingDisplay.className = 'item-value text-cash';
+        profitAfterTax = preTaxProfit;
       }
-      profitAfterTax = preTaxProfit - estimatedTaxAmount;
     } else {
-      // In case of a loss, income tax is 0.
-      // The 1% TDS deducted by the exchange can be claimed back as refund in the annual ITR
-      remainingTaxToPay = 0;
-      excessTdsRefund = sellTdsAmount;
-      settlementRemainingLabel.textContent = 'Refundable TDS in ITR (On Loss)';
-      settlementRemainingDisplay.textContent = `+ ${formatMoney(excessTdsRefund)}`;
-      settlementRemainingDisplay.className = 'item-value text-cash';
-      profitAfterTax = preTaxProfit;
+      // Non-Indian jurisdictions (US, UK, Germany, UAE, Singapore, Canada, Australia)
+      if (profitTaxPct === 0) {
+        settlementRemainingLabel.textContent = 'Tax Obligation';
+        settlementRemainingDisplay.textContent = '0.00 (Tax-Free)';
+        settlementRemainingDisplay.className = 'item-value text-cash';
+        profitAfterTax = preTaxProfit;
+      } else {
+        settlementRemainingLabel.textContent = 'Direct Tax Due to Tax Authority';
+        settlementRemainingDisplay.textContent = formatMoney(estimatedTaxAmount);
+        settlementRemainingDisplay.className = 'item-value tax-highlight';
+        profitAfterTax = preTaxProfit - estimatedTaxAmount;
+      }
     }
 
     // 7. Immediate Cash In-Hand at Exit (Wallet balance right at sale)
@@ -375,9 +602,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (recordHistory) {
       const formattedROI = `${patSign}${Math.abs(roi).toFixed(2)}% ROI`;
       const preset = countryTaxAndFeePresets[currentCode] || countryTaxAndFeePresets.INR;
+      const yearLabel = taxYearSelect.value;
 
       addHistoryRecord({
-        country: preset.country,
+        country: `${preset.country} (${yearLabel})`,
         qty,
         buyPrice: formatMoney(buyPrice),
         sellPrice: formatMoney(sellPrice),

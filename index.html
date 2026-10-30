@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crypto Profit After Indian Tax Calculator - TDS & Capital Gains</title>
+  <title>Crypto Profit After Tax Calculator - Country & Tax Year Selector</title>
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,8 +22,8 @@
         </svg>
       </div>
       <div>
-        <h1>Crypto Profit After Indian Tax Calculator</h1>
-        <p>Calculate profit before tax, estimated Indian tax, TDS advance tax credit, and final profit after tax.</p>
+        <h1>Crypto Profit After Tax Calculator</h1>
+        <p>Choose your tax-residence country and tax year to accurately compute profit before tax, estimated tax, and take-home profit.</p>
       </div>
     </header>
 
@@ -31,25 +31,70 @@
       <!-- Calculator Form Section -->
       <section class="card input-card">
         <div class="card-header">
-          <h2>Trade Parameters</h2>
+          <h2>Tax Residence &amp; Trade Parameters</h2>
           <button type="button" id="resetBtn" class="btn-text">Reset</button>
+        </div>
+
+        <!-- Region Quick Filter Tabs -->
+        <div class="region-tabs" role="tablist">
+          <button type="button" class="region-tab active" data-region="all">🌍 All Regions</button>
+          <button type="button" class="region-tab" data-region="asia">🇮🇳 Asia &amp; ME</button>
+          <button type="button" class="region-tab" data-region="americas">🇺🇸 Americas</button>
+          <button type="button" class="region-tab" data-region="europe">🇪🇺 Europe &amp; UK</button>
+          <button type="button" class="region-tab" data-region="oceania">🇦🇺 Oceania</button>
         </div>
 
         <form id="pnlForm" autocomplete="off">
           <div class="form-row">
             <div class="form-group">
-              <label for="currencySelect">Country &amp; Tax Regime</label>
+              <label for="currencySelect">Tax-Residence Country</label>
               <select id="currencySelect" class="form-control">
-                <option value="INR" selected>🇮🇳 INR (₹) - India (1% TDS + 30% Tax)</option>
-                <option value="USD">🇺🇸 USD ($) - USA (0.1% Fee + 15% CGT)</option>
-                <option value="EUR">🇪🇺 EUR (€) - Europe (0.15% Fee + 30% Flat Tax)</option>
-                <option value="GBP">🇬🇧 GBP (£) - UK (0.2% Fee + 20% CGT)</option>
+                <optgroup label="Asia &amp; Middle East" data-region="asia">
+                  <option value="INR" selected data-region="asia">🇮🇳 India (INR ₹) — 30% VDA Tax + 1% TDS</option>
+                  <option value="AED" data-region="asia">🇦🇪 UAE / Dubai (AED د.إ) — 0% Tax (Tax-Free)</option>
+                  <option value="SGD" data-region="asia">🇸🇬 Singapore (SGD S$) — 0% CGT (Tax-Free)</option>
+                </optgroup>
+                <optgroup label="Americas" data-region="americas">
+                  <option value="USD" data-region="americas">🇺🇸 USA (USD $) — 15% Long-Term CGT</option>
+                  <option value="CAD" data-region="americas">🇨🇦 Canada (CAD C$) — 20% Effective CGT</option>
+                </optgroup>
+                <optgroup label="Europe &amp; United Kingdom" data-region="europe">
+                  <option value="GBP" data-region="europe">🇬🇧 United Kingdom (GBP £) — 20% HMRC CGT</option>
+                  <option value="EUR_DE" data-region="europe">🇩🇪 Germany (EUR €) — 0% &gt;1 Yr / 26.38%</option>
+                  <option value="EUR" data-region="europe">🇪🇺 European Union (EUR €) — 30% Flat CGT</option>
+                </optgroup>
+                <optgroup label="Oceania" data-region="oceania">
+                  <option value="AUD" data-region="oceania">🇦🇺 Australia (AUD A$) — 50% CGT Discount (~24%)</option>
+                </optgroup>
               </select>
             </div>
+
+            <div class="form-group">
+              <label for="taxYearSelect">Tax Year / Assessment Year</label>
+              <select id="taxYearSelect" class="form-control">
+                <option value="2026" selected>FY 2026 - 2027 (Current)</option>
+                <option value="2025">FY 2025 - 2026</option>
+                <option value="2024">FY 2024 - 2025</option>
+                <option value="2023">FY 2023 - 2024</option>
+              </select>
+              <span class="field-hint" id="taxYearHint">Assessment Year 2026-27 tax provisions active</span>
+            </div>
+          </div>
+
+          <div class="form-row">
             <div class="form-group">
               <label for="coinQuantity">Coin Quantity</label>
               <input type="number" id="coinQuantity" class="form-control" placeholder="e.g. 0.5 BTC" step="any" min="0"
                 required>
+            </div>
+
+            <div class="form-group">
+              <label for="holdingPeriodSelect" id="holdingPeriodLabel">Holding Period (Asset Classification)</label>
+              <select id="holdingPeriodSelect" class="form-control">
+                <option value="long" selected>Long-Term (&gt; 1 Year)</option>
+                <option value="short">Short-Term (&le; 1 Year)</option>
+              </select>
+              <span class="field-hint" id="holdingPeriodHint">In India, Section 115BBH applies a flat 30% rate for any holding duration.</span>
             </div>
           </div>
 
@@ -99,7 +144,7 @@
             <div class="form-group">
               <div class="label-with-badge">
                 <label for="sellTds" id="sellTdsLabel">Sell TDS (Sec 194S) (%)</label>
-                <span class="auto-badge advance-pill">Advance Tax</span>
+                <span class="auto-badge advance-pill" id="sellTdsBadge">Advance Tax</span>
               </div>
               <input type="number" id="sellTds" class="form-control" placeholder="1.0" step="any" min="0" value="1.0">
               <span class="field-hint" id="sellTdsHint">Section 194S: 1.0% TDS deducted at source by Indian exchanges on every sell order.</span>
@@ -144,7 +189,7 @@
           </div>
 
           <div class="tax-summary-box primary-box">
-            <span class="tax-box-title">Profit After Tax</span>
+            <span class="tax-box-title">Profit After Tax (Take-Home)</span>
             <div class="tax-box-value neutral" id="patHighlightDisplay">₹0.00</div>
             <span class="tax-box-sub" id="roiSubDisplay">0.00% Net ROI</span>
           </div>
@@ -157,7 +202,7 @@
               <span class="settlement-title">TDS Credit &amp; Tax Settlement</span>
               <span class="settlement-pill" id="tdsPillBadge">1% TDS (Sec 194S)</span>
             </div>
-            <span class="settlement-tag">Not an Extra Tax</span>
+            <span class="settlement-tag" id="settlementTag">Not an Extra Tax</span>
           </div>
 
           <div class="settlement-grid">
@@ -166,9 +211,9 @@
               <span class="item-value tax-highlight" id="settlementTaxDisplay">₹0.00</span>
             </div>
             <div class="settlement-item">
-              <span class="item-label">
+              <span class="item-label" id="settlementTdsTitle">
                 TDS Already Deducted
-                <span class="advance-tag">Advance Paid</span>
+                <span class="advance-tag" id="settlementAdvanceTag">Advance Paid</span>
               </span>
               <span class="item-value text-deducted" id="settlementTdsDisplay">- ₹0.00</span>
             </div>
@@ -189,7 +234,7 @@
               <line x1="12" y1="8" x2="12.01" y2="8"></line>
             </svg>
             <div class="tds-alert-content">
-              <strong>Why TDS is not an extra tax:</strong>
+              <strong id="tdsAlertTitle">Why TDS is not an extra tax:</strong>
               <p id="tdsAlertText">The 1% TDS (Sec 194S) is already deducted at source by Indian crypto exchanges on your sell order and remitted to the Income Tax Dept against your PAN. It acts as an advance tax credit that reduces your final 30% tax liability during annual ITR filing. You do NOT pay 30% + 1%.</p>
             </div>
           </div>
@@ -222,7 +267,7 @@
             <span class="item-value text-deducted" id="tdsDisplay">₹0.00</span>
           </div>
           <div class="breakdown-item full-width">
-            <span class="item-label">Final Net Profit After Tax (PAT)</span>
+            <span class="item-label">Final Take-Home Profit After Tax (PAT)</span>
             <span class="item-value fee-highlight" id="finalNetProfitDisplay">₹0.00</span>
           </div>
         </div>
@@ -239,14 +284,14 @@
         <table class="history-table">
           <thead>
             <tr>
-              <th>Country</th>
+              <th>Country &amp; Year</th>
               <th>Qty</th>
               <th>Buy Price</th>
               <th>Sell Price</th>
               <th>Profit Before Tax</th>
               <th>Estimated Tax</th>
               <th>TDS Deducted</th>
-              <th>Profit After Tax</th>
+              <th>Take-Home Profit</th>
               <th>Net ROI</th>
             </tr>
           </thead>
