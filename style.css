@@ -1966,3 +1966,513 @@ body {
   font-size: 1.05rem;
   color: #15803d;
 }
+
+.mobile-table-hint {
+  display: none;
+}
+
+/* ==========================================================================
+   MOBILE-FIRST ERGONOMIC RESPONSIVE SYSTEM
+   Optimized for all mobile screen sizes: 320px, 360px, 375px, 390px, 414px, 480px, 768px
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  body {
+    padding: 12px 10px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .app-container {
+    gap: 14px;
+    max-width: 100%;
+  }
+
+  /* Header Optimization */
+  .app-header {
+    gap: 12px;
+  }
+
+  .logo-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+
+  .logo-badge svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .app-header h1 {
+    font-size: 1.25rem;
+    line-height: 1.3;
+  }
+
+  .app-header p {
+    font-size: 0.8rem;
+    line-height: 1.35;
+  }
+
+  /* Card padding reduction to maximize usable content width */
+  .card {
+    padding: 16px 14px;
+    border-radius: 12px;
+  }
+
+  .card-header {
+    margin-bottom: 14px;
+  }
+
+  .card-header h2 {
+    font-size: 1.05rem;
+  }
+
+  /* Tool Navigation - Smooth Touch-Scroll Tab Bar */
+  .tool-nav {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 4px;
+    gap: 6px;
+    border-radius: 10px;
+  }
+
+  .tool-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tool-nav-btn {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    min-height: 40px;
+    border-radius: 8px;
+  }
+
+  /* Region Quick Filter Tabs - Thumb Friendly */
+  .region-tabs {
+    gap: 5px;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .region-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .region-tab {
+    padding: 6px 12px;
+    font-size: 0.74rem;
+    min-height: 36px;
+  }
+
+  /* Form Fields - Ergonomic Touch & iOS Safari Auto-Zoom Prevention */
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Setting font-size to 16px prevents iOS Safari from automatically zooming the viewport */
+  .form-control,
+  .converter-num-input,
+  .custom-rate-input,
+  select.form-control {
+    font-size: 16px !important;
+    min-height: 44px;
+  }
+
+  .input-addon-wrap {
+    min-height: 44px;
+    padding-left: 12px;
+  }
+
+  .input-addon-wrap .addon {
+    font-size: 1rem;
+    margin-right: 8px;
+  }
+
+  .input-addon-wrap .form-control.with-addon {
+    font-size: 16px !important;
+    padding: 10px 10px 10px 0 !important;
+  }
+
+  .btn-primary {
+    min-height: 46px;
+    font-size: 0.98rem;
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  /* 3 Summary Cards */
+  .tax-summary-cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .tax-summary-box {
+    padding: 12px 14px;
+  }
+
+  .tax-box-value {
+    font-size: 1.35rem;
+  }
+
+  /* Capital Allocation Flow Bar */
+  .allocation-flow-card {
+    padding: 12px 14px;
+    margin-bottom: 14px;
+  }
+
+  .allocation-bar-track {
+    height: 14px;
+    margin-bottom: 10px;
+  }
+
+  .allocation-legend-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .alloc-legend-item {
+    padding: 6px 8px;
+  }
+
+  .legend-amount {
+    font-size: 0.74rem;
+  }
+
+  /* TDS Settlement Card */
+  .tds-settlement-card {
+    padding: 12px 14px;
+    margin-bottom: 14px;
+  }
+
+  .settlement-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .settlement-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .settlement-item {
+    padding: 8px 12px;
+  }
+
+  .tds-info-alert {
+    padding: 10px 12px;
+  }
+
+  /* Financial Audit Ledger Card */
+  .audit-ledger-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+
+  .audit-ledger-header #copyAuditReportBtn {
+    width: 100%;
+    justify-content: center;
+    min-height: 38px;
+    font-size: 0.8rem;
+  }
+
+  .ledger-sign {
+    padding: 8px 4px 8px 8px;
+    width: 30px;
+  }
+
+  .op-badge {
+    width: 20px;
+    height: 20px;
+    font-size: 0.76rem;
+  }
+
+  .ledger-step {
+    padding: 8px 6px;
+  }
+
+  .step-title {
+    font-size: 0.78rem;
+  }
+
+  .step-desc {
+    font-size: 0.67rem;
+  }
+
+  .ledger-amount {
+    padding: 8px 10px 8px 4px;
+  }
+
+  .ledger-amount .item-value {
+    font-size: 0.88rem;
+  }
+
+  .pat-value-highlight {
+    font-size: 1.02rem !important;
+  }
+
+  /* Crypto-to-Money Converter */
+  .converter-inputs-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .converter-box {
+    padding: 14px 12px;
+  }
+
+  .converter-box-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .select-inline-wrap {
+    width: 100%;
+  }
+
+  .select-compact {
+    width: 100%;
+    min-width: 100%;
+    min-height: 42px;
+    font-size: 16px !important;
+  }
+
+  .converter-input-wrap {
+    min-height: 48px;
+    padding: 4px 10px;
+  }
+
+  .converter-num-input {
+    font-size: 1.35rem;
+  }
+
+  .quick-preset-chips {
+    gap: 5px;
+  }
+
+  .preset-chip {
+    padding: 5px 10px;
+    font-size: 0.76rem;
+    min-height: 32px;
+  }
+
+  .converter-summary-banner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 12px 14px;
+  }
+
+  .conversion-headline {
+    font-size: 1.08rem;
+    justify-content: center;
+    text-align: center;
+    flex-wrap: wrap;
+  }
+
+  .conversion-rate-editor {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .rate-editor-left {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .inline-rate-input-wrap {
+    min-height: 38px;
+  }
+
+  .custom-rate-input {
+    font-size: 16px !important;
+    width: 105px;
+  }
+
+  .btn-action-pill {
+    width: 100%;
+    justify-content: center;
+    min-height: 42px;
+    font-size: 0.85rem;
+  }
+
+  /* Coin-to-Coin Converter */
+  .c2c-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .c2c-box {
+    padding: 14px 12px;
+  }
+
+  .c2c-box-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .c2c-breakdown-banner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 12px 14px;
+  }
+
+  .c2c-rate-main {
+    text-align: center;
+  }
+
+  .c2c-rate-headline {
+    font-size: 1.08rem;
+  }
+
+  .c2c-breakdown-items {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    background: #ffffff;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #fbcfe8;
+  }
+
+  .c2c-detail-item {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Live Genuine Market Prices Grid - 2 balanced columns */
+  .genuine-prices-section {
+    padding: 12px 14px;
+  }
+
+  .genuine-prices-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .coin-prices-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .coin-price-pill {
+    padding: 8px 10px;
+  }
+
+  .coin-pill-sym {
+    font-size: 0.78rem;
+  }
+
+  .coin-pill-val {
+    font-size: 0.88rem;
+  }
+
+  .coin-pill-usd {
+    font-size: 0.68rem;
+  }
+
+  /* Session Audit Log & Table Controls */
+  .history-card .card-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .history-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .history-actions .btn-action-sm {
+    justify-content: center;
+    min-height: 38px;
+    font-size: 0.78rem;
+    padding: 6px 8px;
+  }
+
+  .history-actions .btn-text {
+    min-height: 38px;
+    padding: 6px 10px;
+  }
+
+  .mobile-table-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    background: #f1f5f9;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-weight: 500;
+    user-select: none;
+  }
+
+  .mobile-table-hint svg {
+    color: var(--primary);
+    flex-shrink: 0;
+  }
+
+  .history-table th,
+  .history-table td {
+    padding: 8px 10px;
+    font-size: 0.78rem;
+  }
+
+  /* Mobile Toast */
+  .toast-notification {
+    left: 12px;
+    right: 12px;
+    bottom: 14px;
+    width: auto;
+    justify-content: center;
+    font-size: 0.8rem;
+    padding: 10px 14px;
+  }
+}
+
+/* Ultra-Compact Screens (e.g. Galaxy Z Fold outer screen 320px - 360px) */
+@media (max-width: 360px) {
+  body {
+    padding: 8px 4px;
+  }
+
+  .card {
+    padding: 12px 10px;
+  }
+
+  .coin-prices-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .allocation-legend-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .history-actions {
+    grid-template-columns: 1fr;
+  }
+}
